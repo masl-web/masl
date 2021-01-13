@@ -1,5 +1,6 @@
 # READMD
 # 서비스 흐름도
+[서비스 흐름도 바로가기](https://whimsical.com/embed/TZC6SK5v72gc57a3J2p5ZG)
 ![img](https://img1.daumcdn.net/thumb/R1280x0/?scode=mtistory2&fname=https%3A%2F%2Fblog.kakaocdn.net%2Fdn%2FcRrvfE%2FbtqTqIZGj4d%2F2DTtOrCS677WFCxmxWMR9K%2Fimg.png)
 
 # 개발계획
