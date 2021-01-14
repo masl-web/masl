@@ -1,8 +1,10 @@
 import json
 import requests
+import argparse
 
 import os
 from time import sleep
+import sys
 
 from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
@@ -10,7 +12,6 @@ from selenium.common.exceptions import ElementNotInteractableException
 from bs4 import BeautifulSoup
 
 import pandas as pd
-
 
 # 크롬 드라이버 옵션 설정
 options = webdriver.ChromeOptions()
@@ -28,11 +29,20 @@ def main():
     # 크롬 드라이버는 전역 변수
     global driver
 
+    # 외부 변수 할당
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--city', type=str, help="set city", default='서울시')
+    parser.add_argument('--store', type=str, help="set store", default='스타벅스')
+    parser.add_argument('--output_file', type=str, help="set output filename", default='starbucks_seoul(geo).csv')
+
+    args = parser.parse_args()
+
+    city = args.city
+    store = args.store
+    output_csv_name = args.output_file
+
     # 변수 선언 : 크롤링하고자 하는 매장에 따라 변경 가능
-    city = "서울시"
-    store = '맥도날드'
     keyword = city + " " + store
-    output_csv_name = 'raw_data/mcdonalds_seoul(geo).csv'
 
     # 4초 대기
     driver.implicitly_wait(4)
@@ -44,7 +54,7 @@ def main():
     search(keyword, store)
 
     # 크롤링 후 .csv 로 변환
-    df.to_csv(output_csv_name)
+    df.to_csv('raw_data/'+output_csv_name)
 
     # 웹드라이버 셧 다운
     driver.quit()
