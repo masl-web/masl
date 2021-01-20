@@ -126,6 +126,9 @@ def crawling(store_lists, store):
 
         # 매장 주소
         store_addr = place.select('.info_item > .addr > p')[0].text
+        addr_list = store_addr.split(" ")
+        addr_list = addr_list[:4]
+        store_addr = " ".join(addr_list)
 
         # 매장 카테고리
         store_type = place.select('.head_item > span')[0].text
@@ -155,9 +158,9 @@ def getGeoCode(address):
     # url 로 위경도 정보 호출
     result = json.loads(str(requests.get(url, headers=headers).text))
 
-    # 위경도 정보 호출 실패 시 위도 경도 값 각각 "-" 값으로 대체
+    # 위경도 정보 호출 실패 시 위도 경도 값 각각 "N/A" 값으로 대체
     if result['documents'] == []:
-        return "-", "-"
+        return "N/A", "N/A"
     else:
         match_first = result['documents'][0]['address']
 
