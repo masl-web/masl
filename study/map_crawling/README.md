@@ -31,4 +31,5 @@ python crawler.py --city "서울시" --store "스타벅스" --output_file "starb
 ## 이슈
 * 카카오맵 API 가 변환하지 못하는 매장 주소 존재
   * [Google Geocode By Awesome Table](https://workspace.google.com/marketplace/app/geocode_by_awesome_table/904124517349) 사용하여 결측값 보완
+  * **매장 상세 주소(OO층, OO앞.. etc) 절사하는 코드 추가하여 결측값 이슈 해결**
 
