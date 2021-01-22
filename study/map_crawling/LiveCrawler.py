@@ -38,7 +38,7 @@ sleep(3)
 driver.switch_to.window(tabs[1])
 driver.get('https://map.kakao.com/')
 
-def live_crawler(top_lat, top_lng, btm_lat, btm_lng):
+def area_crawler(top_lat, top_lng, btm_lat, btm_lng):
     # 크롬 드라이버는 전역 변수
     global driver
 
@@ -99,7 +99,7 @@ def search(keyword, facility, df):
     addr_data = addr.split(" ")
     addr = " ".join(addr_data[1:3])
 
-    df_temp = crawling(addr, facility, df)
+    df_temp = list_crawler(addr, facility, df)
     df_total = df_total.append(df_temp)
 
     driver.switch_to.window(tabs[0])
@@ -107,7 +107,7 @@ def search(keyword, facility, df):
     return df_total
 
 # 한 페이지 목록을 받아서 크롤링 하는 함수
-def crawling(addr, facility, df):
+def list_crawler(addr, facility, df):
 
     for f in facility:
         keyword = addr + " " + f
