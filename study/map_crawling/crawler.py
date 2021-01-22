@@ -110,8 +110,11 @@ def search(keyword, store, df):
             else:
                 break
 
-    except ElementNotInteractableException:
-        print('No More Result')
+    except ElementNotInteractableException as ni:
+        print('No More Result', ni)
+
+    except Exception as err:
+        print("Error", err)
 
     finally:
         search_area.clear()
