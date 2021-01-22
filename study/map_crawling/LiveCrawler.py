@@ -38,7 +38,7 @@ sleep(3)
 driver.switch_to.window(tabs[1])
 driver.get('https://map.kakao.com/')
 
-def crawler(top_lat, top_lng, btm_lat, btm_lng):
+def live_crawler(top_lat, top_lng, btm_lat, btm_lng):
     # 크롬 드라이버는 전역 변수
     global driver
 
