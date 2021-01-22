@@ -4,7 +4,6 @@ import argparse
 
 import os
 from time import sleep
-import sys
 
 from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
@@ -22,9 +21,6 @@ options.add_argument('lang=ko_KR') # 언어는 한국어
 driver_path = "tools/chromedriver.exe" # 다운로드 : https://chromedriver.chromium.org/downloads
 driver = webdriver.Chrome(os.path.join(os.getcwd(), driver_path), options=options)
 
-# 빈 데이터프레임 생성 : https://shydev.tistory.com/29
-df = pd.DataFrame(columns=['store_id','store_type', 'store_brand', 'store_name', 'store_addr','store_geo_lat','store_geo_lng'])
-
 def main():
     # 크롬 드라이버는 전역 변수
     global driver
@@ -41,6 +37,9 @@ def main():
     store = args.store
     output_csv_name = args.output_file
 
+    # 빈 데이터프레임 생성 : https://shydev.tistory.com/29
+    df = pd.DataFrame(columns=['store_id', 'store_type', 'store_brand', 'store_name', 'store_addr', 'store_geo_lat', 'store_geo_lng'])
+
     # 변수 선언 : 크롤링하고자 하는 매장에 따라 변경 가능
     keyword = city + " " + store
 
@@ -51,17 +50,21 @@ def main():
     driver.get('https://map.kakao.com/')
 
     # 검색 및 크롤링 함수 실행
-    search(keyword, store)
+    df_total = search(keyword, store, df)
+
+    print(df_total)
 
     # 크롤링 후 .csv 로 변환
-    df.to_csv('raw_data/'+output_csv_name)
+    df_total.to_csv("raw_data/"+output_csv_name)
 
     # 웹드라이버 셧 다운
     driver.quit()
     print("크롤링 완료")
 
-def search(keyword, store):
+def search(keyword, store, df):
     global driver
+
+    df_total = pd.DataFrame(columns=['store_id', 'store_type', 'store_brand', 'store_name', 'store_addr', 'store_geo_lat', 'store_geo_lng'])
 
     # xPath 로 검색창 태그 추출
     search_area = driver.find_element_by_xpath('//*[@id="search.keyword.query"]')
@@ -93,8 +96,9 @@ def search(keyword, store):
                 # 한 페이지에 검색된 매장 리스트
                 store_lists = soup.select('.placelist > .PlaceItem')
 
-                # 한 페이지 크롤링
-                crawling(store_lists, store)
+                # 한 페이지 크롤링한 결과를 기존 데이터프레임에 .append
+                df_temp = crawling(store_lists, store, df)
+                df_total = df_total.append(df_temp)
 
             # [다음] 버튼의 클래스 속성 값이 next 이면 계속 넘어가고, 아니면(next disabled) 크롤링 종료
             next_button = driver.find_element_by_xpath('//*[@id="info.search.page.next"]')
@@ -107,14 +111,15 @@ def search(keyword, store):
                 break
 
     except ElementNotInteractableException:
-        print('not found')
+        print('No More Result')
 
     finally:
         search_area.clear()
 
+    return df_total
+
 # 한 페이지 목록을 받아서 크롤링 하는 함수
-def crawling(store_lists, store):
-    global df
+def crawling(store_lists, store, df):
 
     # 광고에 따라서 index 조정 필요 - 광고칸은 목록에서 4번째마다 등장
     for i, place in enumerate(store_lists):
@@ -140,6 +145,7 @@ def crawling(store_lists, store):
         # 데이터프레임에 데이터 .append
         df = df.append(pd.DataFrame([['-', store_type, store, store_name, store_addr, store_geo_lat, store_geo_lng]], columns=['store_id', 'store_type', 'store_brand', 'store_name', 'store_addr','store_geo_lat','store_geo_lng']))
 
+    return df
         # 웹드라이버 임시 종료 - 종료하면 세션 만료로 오류 발생해서 주석 처리
         # driver.close()
 
@@ -149,7 +155,7 @@ def getGeoCode(address):
     # 주소 정보 입력
     url = 'https://dapi.kakao.com/v2/local/search/address.json?query={}'.format(address)
 
-    # KAKAO REST API 토큰 인증
+    # KAKAO REST API 토큰 인증 - 2021/1/21 부터 2개월 유효
     headers = {"Authorization": "KakaoAK db80de33bb89c7f47c6cb2948ca14e90"}
 
     # url 로 위경도 정보 호출
