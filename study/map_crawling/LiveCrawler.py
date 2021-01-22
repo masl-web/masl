@@ -38,7 +38,7 @@ sleep(3)
 driver.switch_to.window(tabs[1])
 driver.get('https://map.kakao.com/')
 
-def area_crawler(top_lat, top_lng, btm_lat, btm_lng):
+def area_crawler(top_lat, top_lng, btm_lat, btm_lng, facility):
     # 크롬 드라이버는 전역 변수
     global driver
 
@@ -52,8 +52,6 @@ def area_crawler(top_lat, top_lng, btm_lat, btm_lng):
 
     # 구글에 검색할 "위도값, 경도값"
     geo_keyword = str(lat_center) + ", " + str(lng_center)
-
-    facility = ['병원', '공원', '은행']
 
     # 4초 대기
     driver.implicitly_wait(4)
