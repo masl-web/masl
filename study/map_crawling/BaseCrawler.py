@@ -134,6 +134,9 @@ def crawling(store_lists, store, df):
 
         # 매장 주소
         store_addr = place.select('.info_item > .addr > p')[0].text
+        addr_list = store_addr.split(" ")
+        addr_list = addr_list[:4]
+        store_addr = " ".join(addr_list)
 
         # 매장 카테고리
         store_type = place.select('.head_item > span')[0].text
