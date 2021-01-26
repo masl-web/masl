@@ -1,0 +1,31 @@
+<!doctype html>
+<html>
+   <body>
+      <p>입력한 내용</p>
+      <table border = 1>   
+         {% for key, value in result.items() %}
+            <tr>
+               <th> {{ key }} </th>
+               <td> {{ value }} </td>
+            </tr>
+         {% endfor %}
+      </table>
+      <p>----------------------------------------------</p>
+      <p>세부설정</p>
+      <form action = "http://localhost:8080/result2" method = "POST">
+         <p>희망 가게를 입력하세요.
+            <br/>
+            (편의점, 유흥시설, 음식점, 카페)
+            <br/>
+            <input type = "text" name = "Store" />
+         </p>
+         <p>이용 교통을 입력하세요.
+            <br/>
+            (지하철, 버스, 자전거)
+            <br/>
+            <input type = "text" name = "Traffic" /></p>
+         <p><input type = "submit" value = "결과보기" /></p>
+      </form>
+      
+   </body>
+</html>
