@@ -20,10 +20,10 @@ def salary():
     if request.method == 'POST':
         address = request.form['address']
         store_list = request.form.getlist('cafe')
-        home = maslAreaSelector.getGeoCode(address)
+        home = crawler.getGeoCode(address)
         stations = maslAreaSelector.NearMetro(home)
         lines = maslAreaSelector.getMetroLine(stations)
-        metro_area_list = maslAreaSelector.allMetroLineStations(lines))
+        metro_area_list = maslAreaSelector.allMetroLineStations(lines)
         bus_stations = maslAreaSelector.nearBusStop(home)
 
         return render_template('home.html')
