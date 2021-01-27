@@ -19,7 +19,7 @@
         var mapContainer = document.getElementById('map'), // 지도를 표시할 div 
             mapOption = {
                 center: new kakao.maps.LatLng(33.450701, 126.570667), // 지도의 Default 중심좌표
-                level: 5 // 지도의 확대 레벨 
+                level: 8 // 지도의 확대 레벨 
             };
 
         var map = new kakao.maps.Map(mapContainer, mapOption); // 지도 생성
@@ -89,7 +89,7 @@
                 fillColor: '#5049c9', // 채우기 색깔
                 fillOpacity: 0.5  // 채우기 불투명도
             });
-            
+
             circle1.setMap(map); // 지도에 원 그리기
 
             // 마우스오버 이벤트가 발생했을 때 변경할 채우기 옵션
