@@ -89,7 +89,48 @@
                 fillColor: '#5049c9', // 채우기 색깔
                 fillOpacity: 0.5  // 채우기 불투명도
             });
+            
             circle1.setMap(map); // 지도에 원 그리기
+
+            // 마우스오버 이벤트가 발생했을 때 변경할 채우기 옵션
+            var mouseoverOption = { 
+                fillColor: '#EFFFED', // 채우기 색깔
+                fillOpacity: 0.8 // 채우기 불투명도      
+            };
+
+            // 마우스아웃 이벤트가 발생했을 때 변경할 채우기 옵션
+            var mouseoutOption = {
+                fillColor: '#5049c9', // 채우기 색깔
+                fillOpacity: 0.5 // 채우기 불투명도      
+            };
+
+            // 마우스오버 이벤트를 등록
+            kakao.maps.event.addListener(circle1, 'mouseover', function() { 
+
+                // 채우기 옵션을 변경
+                circle1.setOptions(mouseoverOption);
+
+            });
+
+            kakao.maps.event.addListener(circle1, 'mouseout', function() { 
+
+                // 채우기 옵션을 변경
+                circle1.setOptions(mouseoutOption);
+    
+            }); 
+
+            // 마우스다운 이벤트를 등록
+            kakao.maps.event.addListener(circle1, 'mousedown', function() { 
+                console.log(event);
+                // var resultDiv = document.getElementById('result');
+                // resultDiv.innerHTML = '지역이 선택되었습니다! (해당 지역으로 이동하는 기능 필요)';
+                var mapContainer = document.getElementById('map'), // 지도를 표시할 div 
+                    mapOption = {
+                        center: new kakao.maps.LatLng(circle1.getPosition().getLat(), circle1.getPosition().getLng()),
+                        level: 5 // 지도의 확대 레벨 
+                    };
+                var map2 = new kakao.maps.Map(mapContainer, mapOption); // 지도 생성
+            }); 
         }
     </script>
 </body>
