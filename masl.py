@@ -1,7 +1,4 @@
 from flask import Flask, render_template, request, url_for, redirect
-from masldb import MaslDataInput
-from crawler import storeCrawler
-import maslAreaSelector
 
 app = Flask(__name__)
 
@@ -30,7 +27,7 @@ def salary():
         # lines 해당 지하철 역을 지나는 지하철 호선 리스트 저장
         lines = maslAreaSelector.getMetroLine(stations)
         # metro_area_list = 지하철 호선 내 모든 역 리스트 저장
-        metro_area_list = maslAreaSelector.allMetroLineStations(lines))
+        metro_area_list = maslAreaSelector.allMetroLineStations(lines)
         # bus_stations 변수에 home에서 100m이내 모든 버스 정류장 리스트 저장
         bus_stations = maslAreaSelector.nearBusStop(home)
         

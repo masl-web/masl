@@ -8,6 +8,7 @@ db = masl_client['LocationData']
 store_col = db['StoreData']
 metro_col = db['MetroData']
 bus_stop_col = db['BusStopData']
+bus_lines_col = db['BusLinesData']
 
 # 지하철 역 csv 파일 몽고db에 초기 값으로 저장
 metro = pd.read_csv('BackData/metro_station_seoul_final.csv', encoding='cp949')
@@ -22,8 +23,12 @@ for i in range(0,443):
 # 버스정류장 csv 파일 몽고db에 초기 값으로 저장
 bus_stop = pd.read_csv('BackData/bus_stop_seoul_final.csv', encoding='cp949')
 for i in range(0,11178):
-    bus_stop_col.insert({"type": "BusStop", "station_name": bus_stop.loc[i][1], "station_id": str(bus_stop.loc[i][3]), 
+    bus_stop_col.insert({"type": "BusStop", "station_name": bus_stop.loc[i][1], "station_id": str(bus_stop.loc[i][2]), 
                     "geo_lat": bus_stop.loc[i][4], "geo_lng": bus_stop.loc[i][5]})
+
+bus_lines = pd.read_csv('BackData/seoul_busline_info.csv', encoding='utf-8')
+for i in range(0,39362):
+    bus_lines_col.insert({"station_id": bus_lines.loc[i][4], "bus_line": bus_lines.loc[i][1]})
 
 # 스타벅스 csv 파일 몽고db에 초기 값으로 저장
 store = pd.read_csv('BackData/starbucks_seoul(geo)_final.csv', encoding='cp949')
@@ -60,6 +65,6 @@ def searchStoreData(target_location, store_type, brand):
             temp.append(store['geo_lng'])
             store_list.append(temp)
     if count > 0:
-        return store_list:
+        return store_list
     else:
-        return False:
+        return False
