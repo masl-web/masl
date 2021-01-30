@@ -8,8 +8,10 @@ db = masl_client['LocationData']
 store_col = db['StoreData']
 metro_col = db['MetroData']
 bus_stop_col = db['BusStopData']
+bus_lines_col = db['BusLinesData']
 
-metro = pd.read_csv('BackData/metro_station_seoul_final.csv', encoding='UTF-8')
+# 지하철 역 csv 파일 몽고db에 초기 값으로 저장
+metro = pd.read_csv('BackData/metro_station_seoul_final.csv', encoding='cp949')
 for i in range(0,443):
     if " " not in metro.loc[i][1]:
         pass
@@ -18,16 +20,23 @@ for i in range(0,443):
                         "station_name": metro.loc[i][1].split(" ")[0], "station_address": metro.loc[i][2],
                         "geo_lat": metro.loc[i][3], "geo_lng": metro.loc[i][4]})
 
-bus_stop = pd.read_csv('BackData/bus_stop_seoul_final.csv', encoding='UTF-8')
+# 버스정류장 csv 파일 몽고db에 초기 값으로 저장
+bus_stop = pd.read_csv('BackData/bus_stop_seoul_final.csv', encoding='cp949')
 for i in range(0,11178):
-    bus_stop_col.insert({"type": "BusStop", "station_name": bus_stop.loc[i][1], "station_id": str(bus_stop.loc[i][3]), 
+    bus_stop_col.insert({"type": "BusStop", "station_name": bus_stop.loc[i][1], "station_id": str(bus_stop.loc[i][2]), 
                     "geo_lat": bus_stop.loc[i][4], "geo_lng": bus_stop.loc[i][5]})
 
-store = pd.read_csv('BackData/starbucks_seoul(geo)_final.csv', encoding='UTF-8')
+bus_lines = pd.read_csv('BackData/seoul_busline_info.csv', encoding='utf-8')
+for i in range(0,39362):
+    bus_lines_col.insert({"station_id": bus_lines.loc[i][4], "bus_line": bus_lines.loc[i][1]})
+
+# 스타벅스 csv 파일 몽고db에 초기 값으로 저장
+store = pd.read_csv('BackData/starbucks_seoul(geo)_final.csv', encoding='cp949')
 for i in range(0,499):
     store_col.insert({"type": "Cafe", "brand": "starbucks", "store_name": store.loc[i][4], "store_address": store.loc[i][5],
                     "geo_lat": store.loc[i][6], "geo_lng": store.loc[i][7]})
 
+# db에 매장이름과 매장주소가 없을 시 store 컬렉션에 추가
 def addStoreData(store_type, brand, store_name, store_address, geo_lat, geo_lng):
     query = {"$and": [{"store_name": self.str_name}, {"store_address": self.str_addr}]}
     if store_col.find(query) == None:
@@ -38,6 +47,7 @@ def addStoreData(store_type, brand, store_name, store_address, geo_lat, geo_lng)
                         "geo_lat": geo_lat,
                         "geo_lng": geo_lng})
 
+# db에 해당 브랜드 데이터가 있는 지 조회 / 있다면 스토어 리스트를 없다면 False값 반환
 def searchStoreData(target_location, store_type, brand):
     query = {"type": store_type, "brand": brand}
     count = 0
