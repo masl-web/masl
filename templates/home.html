@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html style="width:100%;height:100%;">
 
 <head>
     <meta charset="UTF-8">
@@ -8,23 +8,26 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
 </head>
 
-<body>
+<body style="width:100%;height:100%;">
     <h1>MASL</h1>
-    <div id="map"></div>
+    <div id="map" style="width:99%;height:90%;"></div>
     <script type="text/javascript"
-        src="//dapi.kakao.com/v2/maps/sdk.js?appkey=10006c6206025d0a4da93230b38d2bd2"></script>
+        src="//dapi.kakao.com/v2/maps/sdk.js?appkey=c7aa4e274f4f8ca1eae60d350e5ebee9"></script>
     <script>
         // 로컬에서 실행 시 - cmd 에서 현재 폴더로 이동 -> python -m http.server 8080 실행 -> 크롬 브라우저에 http://localhost:8080
-        
+
         var mapContainer = document.getElementById('map'), // 지도를 표시할 div 
             mapOption = {
                 center: new kakao.maps.LatLng(33.450701, 126.570667), // 지도의 Default 중심좌표
-                level: 8 // 지도의 확대 레벨 
+                level: 9 // 지도의 확대 레벨 
             };
 
         var map = new kakao.maps.Map(mapContainer, mapOption); // 지도 생성
 
-        // HTML5의 geolocation으로 사용할 수 있는지 확인
+        // 선택된 마커(동심원)의 아이디 받아올 전역 변수 - 이게 있어야 지역(마커 아이디)을 선택해서 매장을 띄워요!
+        var circle_id = null;
+
+        // HTML5의 geolocation으로 사용자 좌표를 사용할 수 있는지 확인
         if (navigator.geolocation) {
 
             // GeoLocation으로 접속 위치 가져오기
@@ -35,102 +38,198 @@
 
                 var locPosition = new kakao.maps.LatLng(37.5642135, 127.0016985); // 마커가 표시될 위치를 얻어온 좌표로 생성
 
-                // 마커 표시
+                // 사용자 위치 마커 표시
                 displayMarker(locPosition);
-                // 동심원 호출
-                circle();
+
             });
+
+            // 마커(동심원) 그리는 함수 호출하여 반환된 circles 배열을 다시 할당
+            var circles = drawCircle();
+
+            // 마커(동심원)별 클릭 이벤트 등록
+            selectCircle(circles);
 
         } else { // HTML5의 GeoLocation을 사용할 수 없을 때
 
             var locPosition = new kakao.maps.LatLng(33.450701, 126.570667);
-
+            alert("사용자 위치를 찾을 수 없습니다. 기본 위치를 적용합니다.")
             displayMarker(locPosition);
         }
 
-        // 지도에 마커 표시하는 함수
+        // 지도에 현재 위치 마커 표시하는 함수
         function displayMarker(locPosition) {
 
-            // 마커 생성
+            // 현재 위치 마커 객체 생성
             var marker = new kakao.maps.Marker({
                 position: locPosition
             });
 
-            // 지도 중심좌표를 접속위치로 변경
+            // 지도 중심 좌표를 접속 위치로 변경
             map.setCenter(locPosition);
 
-            // 마커가 지도 위에 표시되도록 설정
-            marker.setMap(map);  
+            // 현재 위치를 가라키는 마커가 지도 위에 표시되도록 설정
+            marker.setMap(map);
         }
-        function panTo (moveLat, moveLon) {
-            // 이동할 위도 경도 위치를 생성 - 원하는 행정동의 좌표로 이동하는 등.. 사용자 요청에 따른 좌표 필요
-            var moveLocation = new kakao.maps.LatLng(moveLat, moveLon);
-    
-            // 지도 중심을 부드럽게 이동
-            // 이동할 거리가 지도 화면보다 크면 이펙트 없이 이동
-            map.panTo(moveLocation);            
-        }
-        function circle() {
-            /*
-            // 반복문으로 5개 지역 변수 할당 필요
 
-            // 지역별 중심좌표 계산
-            var lat_center = (top_lat + btm_lat) / 2,
-                lng_center = (right_lng + left_lng) / 2;
+        function drawCircle() { // 마커(동심원) 그리는 함수
+
+            var areaList = [ // 임의로 생성한 데이터셋 - 원래 백엔드에서 인자로 받아야 함
+                { id: 1, left_top: { lat: 37.5253635, lng: 126.9858928 }, right_top: { lat: 37.5253635, lng: 126.9948859 }, right_bottom: { lat: 37.5104209, lng: 126.9948859 }, left_bottom: { lat: 37.5104209, lng: 126.9858928 }, area_name: "서울시 00구 00동" },
+                { id: 2, left_top: { lat: 37.7046747, lng: 127.0488445 }, right_top: { lat: 37.7046747, lnglng: 127.0578376 }, right_bottom: { lat: 37.6897321, lng: 127.0578376 }, left_bottom: { lat: 37.6897321, lng: 127.0488445 }, area_name: "서울시 00구 00동" },
+                { id: 3, left_top: { lat: 37.495478299999995, lng: 127.1297824 }, right_top: { lat: 37.495478299999995, lng: 127.1387755 }, right_bottom: { lat: 37.4805357, lng: 127.1387755 }, left_bottom: { lat: 37.4805357, lng: 127.1297824 }, area_name: "서울시 00구 00동" },
+                { id: 4, left_top: { lat: 37.6449043, lng: 127.0848169 }, right_top: { lat: 37.6449043, lng: 127.09381 }, right_bottom: { lat: 37.6299617, lng: 127.09381 }, left_bottom: { lat: 37.6299617, lng: 127.0848169 }, area_name: "서울시 00구 00동" },
+                { id: 5, left_top: { lat: 37.5701913, lng: 126.9049549 }, right_top: { lat: 37.5701913, lng: 126.913948 }, right_bottom: { lat: 37.5552487, lng: 126.913948 }, left_bottom: { lat: 37.5552487, lng: 126.9049549 }, area_name: "서울시 00구 00동" }
+            ];
+
+            var imageSrc = '/circle.png', // 마커 이미지(동심원)의 주소
+                imageSize = new kakao.maps.Size(80, 80), // 마커 이미지의 크기
+                imageOption = { offset: new kakao.maps.Point(40, 40) }; // 마커 이미지의 옵션
+
+            var circles = []; // 5개의 마커(동심원) 객체를 저장할 배열
+
+            for (var i = 0; i < areaList.length; i++) { // areaList에 있는 TOP5영역 수만큼 반복하여 마커(동심원) 객체 생성
+
+                var lat_center = (areaList[i].left_top.lat + areaList[i].left_bottom.lat) / 2, // 중심 좌표 계산
+                    lng_center = (areaList[i].left_top.lng + areaList[i].right_top.lng) / 2;
+
+                var circleImage = new kakao.maps.MarkerImage(imageSrc, imageSize, imageOption), //마커(동심원) 이미지 적용
+                    circlePosition = new kakao.maps.LatLng(lat_center, lng_center); // 마커(동심원)가 표시될 위치
+
+                // 마커(동심원) 객체 생성 - 임시 변수 tmp_circle 로 매번 마커 객체 1개를 받아서 circles 배열에 저장하는 방식
+                var tmp_circle = new kakao.maps.Marker({
+                    position: circlePosition,
+                    image: circleImage,
+                    title: areaList[i].id // 아이디값을 넘겨줌 - 지역별 매장 리스트 불러오기 위해
+                });
+
+                circles.push(tmp_circle) //.append() 와 같은 역할
+            }
+
+            // 현재 지도에 동심원들 그리기
+            for (var i = 0; i < circles.length; i++) {
+                circles[i].setMap(map);
+            }
+
+            return (circles); // 5개의 마커(동심원) 객체 배열 반환
+        }
+
+        function selectCircle(circles) { // 마커(동심원)별 클릭 이벤트 등록하는 함수 - 특정 지역을 선택했을 떄 해당 지역의 정보를 백엔드로 보내야 함
+
+            kakao.maps.event.addListener(circles[0], 'click', function () { // 마커(동심원)의 좌표에 따라 새 지도 생성
+                var mapOption = {
+                    center: new kakao.maps.LatLng(circles[0].getPosition().getLat(), circles[0].getPosition().getLng()),
+                    level: 5
+                };
+                map = new kakao.maps.Map(mapContainer, mapOption);
+                
+                circle_id = circles[0].getTitle();
+                console.log(circle_id);
+                showStore(circle_id);
+            });
+
+            kakao.maps.event.addListener(circles[1], 'click', function () {
+                var mapOption = {
+                    center: new kakao.maps.LatLng(circles[1].getPosition().getLat(), circles[0].getPosition().getLng()),
+                    level: 5
+                };
+                map = new kakao.maps.Map(mapContainer, mapOption);
+                
+                circle_id = circles[1].getTitle();
+                console.log(circle_id);
+                showStore(circle_id);
+            });
+
+            kakao.maps.event.addListener(circles[2], 'click', function () {
+                var mapOption = {
+                    center: new kakao.maps.LatLng(circles[2].getPosition().getLat(), circles[0].getPosition().getLng()),
+                    level: 5
+                };
+                map = new kakao.maps.Map(mapContainer, mapOption);
+                
+                circle_id = circles[2].getTitle();
+                console.log(circle_id);
+                showStore(circle_id);
+            });
+
+            kakao.maps.event.addListener(circles[3], 'click', function () {
+                var mapOption = {
+                    center: new kakao.maps.LatLng(circles[3].getPosition().getLat(), circles[0].getPosition().getLng()),
+                    level: 5
+                };
+                map = new kakao.maps.Map(mapContainer, mapOption);
+                
+                circle_id = circles[3].getTitle();
+                console.log(circle_id);
+                showStore(circle_id);
+            });
+
+            kakao.maps.event.addListener(circles[4], 'click', function () {
+                var mapOption = {
+                    center: new kakao.maps.LatLng(circles[4].getPosition().getLat(), circles[0].getPosition().getLng()),
+                    level: 5
+                };
+                map = new kakao.maps.Map(mapContainer, mapOption);
+                
+                circle_id = circles[4].getTitle();
+                console.log(circle_id);
+                showStore(circle_id);
+            });
+        }
+
+        function showStore(circle_id) { // 선택된 지역의 매장들을 보여주는 함수
+
+            var totalStoreList = [ // 임시 데이터셋 - 백엔드에서 받아야 함
+                [1, ['스타벅스 충무로역점', '서울특별시 중구 필동 퇴계로 197', 37.5618911483912, 126.99386690858361], ['올리브영 명동역점', '서울특별시 중구 충무로2가 65-6', 37.561465750678735, 126.98586319673328], ['GS25 충무로극동점', '서울특별시 중구 충무로3가 60-1', 37.56219699364763, 126.99099158004788], ['맥도날드 명동점', '서울특별시 중구 명동1가 명동7길 8', 37.56439629926746, 126.98441221185999]],
+                [2, ['스타벅스 충무로역점', '서울특별시 중구 필동 퇴계로 197', 37.5618911483912, 126.99386690858361], ['올리브영 명동역점', '서울특별시 중구 충무로2가 65-6', 37.561465750678735, 126.98586319673328], ['GS25 충무로극동점', '서울특별시 중구 충무로3가 60-1', 37.56219699364763, 126.99099158004788], ['맥도날드 명동점', '서울특별시 중구 명동1가 명동7길 8', 37.56439629926746, 126.98441221185999]],
+                [3, ['스타벅스 충무로역점', '서울특별시 중구 필동 퇴계로 197', 37.5618911483912, 126.99386690858361], ['올리브영 명동역점', '서울특별시 중구 충무로2가 65-6', 37.561465750678735, 126.98586319673328], ['GS25 충무로극동점', '서울특별시 중구 충무로3가 60-1', 37.56219699364763, 126.99099158004788], ['맥도날드 명동점', '서울특별시 중구 명동1가 명동7길 8', 37.56439629926746, 126.98441221185999]],
+                [4, ['스타벅스 충무로역점', '서울특별시 중구 필동 퇴계로 197', 37.5618911483912, 126.99386690858361], ['올리브영 명동역점', '서울특별시 중구 충무로2가 65-6', 37.561465750678735, 126.98586319673328], ['GS25 충무로극동점', '서울특별시 중구 충무로3가 60-1', 37.56219699364763, 126.99099158004788], ['맥도날드 명동점', '서울특별시 중구 명동1가 명동7길 8', 37.56439629926746, 126.98441221185999]],
+                [5, ['스타벅스 충무로역점', '서울특별시 중구 필동 퇴계로 197', 37.5618911483912, 126.99386690858361], ['올리브영 명동역점', '서울특별시 중구 충무로2가 65-6', 37.561465750678735, 126.98586319673328], ['GS25 충무로극동점', '서울특별시 중구 충무로3가 60-1', 37.56219699364763, 126.99099158004788], ['맥도날드 명동점', '서울특별시 중구 명동1가 명동7길 8', 37.56439629926746, 126.98441221185999]]
+            ];
+
+            // totalStoreList는 top5 지역의 전체 매장이므로, top5 중 사용자가 선택한 동심원(지역)에 맞는 매장 리스트를 담을 targetStoreList 변수 선언
+            var targetStoreList = null; 
+
+            for(var i=0; i<totalStoreList.length; i++){ // 조건 줘서 맞는 리스트 고르기
+                if(totalStoreList[i][0] === parseInt(circle_id)){
+                    targetStoreList = totalStoreList[i];
+                    break;
+                }else{
+                    continue;
+                }
+            }
+
+            var positions = [];// 매장 마커를 표시할 위치와 매장명 객체 배열을 담을 변수
+
+            /* positions 예시
+                positions = [
+                    {
+                        title: "스타벅스 충무로역점",
+                        LatLng: new kakao.maps.LatLng(37.5618911483912, 126.99386690858361)
+                    },
+                    {
+                        .....
+                    }
+                ];
             */
-            // 지도에 표시할 원을 생성
-            var circle1 = new kakao.maps.Circle({
-                center : new kakao.maps.LatLng(37.493236, 127.056687),  // 동심원의 중심좌표 (강남구 대치1동)
-                radius: 800, // 미터 단위의 원의 반지름
-                strokeWeight: 5, // 선의 두께
-                strokeColor: '#5049c9', // 선의 색깔
-                strokeOpacity: 0, // 선의 불투명도
-                strokeStyle: 'solid', // 선의 스타일
-                fillColor: '#5049c9', // 채우기 색깔
-                fillOpacity: 0.5  // 채우기 불투명도
-            });
 
-            circle1.setMap(map); // 지도에 원 그리기
+            for(var i=0; i<targetStoreList.length; i++){ // positions에 마커로 표시할 각 매장 정보를 추가
+                if(i === 0){
+                    continue;
+                }
+                else{
+                    tmp_dict = { title: targetStoreList[i][0], latlng: new kakao.maps.LatLng(targetStoreList[i][2],targetStoreList[i][3])};
+                    positions.push(tmp_dict);
+                }
+            }
 
-            // 마우스오버 이벤트가 발생했을 때 변경할 채우기 옵션
-            var mouseoverOption = { 
-                fillColor: '#EFFFED', // 채우기 색깔
-                fillOpacity: 0.8 // 채우기 불투명도      
-            };
+            for (var i = 0; i < positions.length; i++) { // positions를 기반으로 여러 개의 마커 표시
 
-            // 마우스아웃 이벤트가 발생했을 때 변경할 채우기 옵션
-            var mouseoutOption = {
-                fillColor: '#5049c9', // 채우기 색깔
-                fillOpacity: 0.5 // 채우기 불투명도      
-            };
-
-            // 마우스오버 이벤트를 등록
-            kakao.maps.event.addListener(circle1, 'mouseover', function() { 
-
-                // 채우기 옵션을 변경
-                circle1.setOptions(mouseoverOption);
-
-            });
-
-            kakao.maps.event.addListener(circle1, 'mouseout', function() { 
-
-                // 채우기 옵션을 변경
-                circle1.setOptions(mouseoutOption);
-    
-            }); 
-
-            // 마우스다운 이벤트를 등록
-            kakao.maps.event.addListener(circle1, 'mousedown', function() { 
-                console.log(event);
-                // var resultDiv = document.getElementById('result');
-                // resultDiv.innerHTML = '지역이 선택되었습니다! (해당 지역으로 이동하는 기능 필요)';
-                var mapContainer = document.getElementById('map'), // 지도를 표시할 div 
-                    mapOption = {
-                        center: new kakao.maps.LatLng(circle1.getPosition().getLat(), circle1.getPosition().getLng()),
-                        level: 5 // 지도의 확대 레벨 
-                    };
-                var map2 = new kakao.maps.Map(mapContainer, mapOption); // 지도 생성
-            }); 
+                var store_marker = new kakao.maps.Marker({
+                    map: map,
+                    position: positions[i].latlng,
+                    title: positions[i].title
+                });
+            }
         }
     </script>
 </body>
