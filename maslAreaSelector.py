@@ -193,3 +193,5 @@ brand = ["starbucks", "맥도날드"]
 data = maslAreaSelector(address)
 result = areaTop10(brand, data, address)
 print(result)
+
+
