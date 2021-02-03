@@ -44,7 +44,7 @@
             });
 
             // 마커(동심원) 그리는 함수 호출하여 반환된 circles 배열을 다시 할당
-            var circles = drawCircle();
+            var circles = drawCircle({{area_list}});
 
             // 마커(동심원)별 클릭 이벤트 등록
             selectCircle(circles);
@@ -73,7 +73,7 @@
 
         function drawCircle() { // 마커(동심원) 그리는 함수
 
-            var areaList = [ // 임의로 생성한 데이터셋 - 원래 백엔드에서 인자로 받아야 함
+            var area_list = [ // 임의로 생성한 데이터셋 - 원래 백엔드에서 인자로 받아야 함
                 { id: 1, left_top: { lat: 37.5253635, lng: 126.9858928 }, right_top: { lat: 37.5253635, lng: 126.9948859 }, right_bottom: { lat: 37.5104209, lng: 126.9948859 }, left_bottom: { lat: 37.5104209, lng: 126.9858928 }, area_name: "서울시 00구 00동" },
                 { id: 2, left_top: { lat: 37.7046747, lng: 127.0488445 }, right_top: { lat: 37.7046747, lnglng: 127.0578376 }, right_bottom: { lat: 37.6897321, lng: 127.0578376 }, left_bottom: { lat: 37.6897321, lng: 127.0488445 }, area_name: "서울시 00구 00동" },
                 { id: 3, left_top: { lat: 37.495478299999995, lng: 127.1297824 }, right_top: { lat: 37.495478299999995, lng: 127.1387755 }, right_bottom: { lat: 37.4805357, lng: 127.1387755 }, left_bottom: { lat: 37.4805357, lng: 127.1297824 }, area_name: "서울시 00구 00동" },
@@ -81,7 +81,7 @@
                 { id: 5, left_top: { lat: 37.5701913, lng: 126.9049549 }, right_top: { lat: 37.5701913, lng: 126.913948 }, right_bottom: { lat: 37.5552487, lng: 126.913948 }, left_bottom: { lat: 37.5552487, lng: 126.9049549 }, area_name: "서울시 00구 00동" }
             ];
 
-            var imageSrc = '/circle.png', // 마커 이미지(동심원)의 주소
+            var imageSrc = 'static/images/circle_1.png', // 마커 이미지(동심원)의 주소
                 imageSize = new kakao.maps.Size(80, 80), // 마커 이미지의 크기
                 imageOption = { offset: new kakao.maps.Point(40, 40) }; // 마커 이미지의 옵션
 
@@ -89,8 +89,8 @@
 
             for (var i = 0; i < areaList.length; i++) { // areaList에 있는 TOP5영역 수만큼 반복하여 마커(동심원) 객체 생성
 
-                var lat_center = (areaList[i].left_top.lat + areaList[i].left_bottom.lat) / 2, // 중심 좌표 계산
-                    lng_center = (areaList[i].left_top.lng + areaList[i].right_top.lng) / 2;
+                var lat_center = (area_list[i].left_top.lat + area_list[i].left_bottom.lat) / 2, // 중심 좌표 계산
+                    lng_center = (area_list[i].left_top.lng + area_list[i].right_top.lng) / 2;
 
                 var circleImage = new kakao.maps.MarkerImage(imageSrc, imageSize, imageOption), //마커(동심원) 이미지 적용
                     circlePosition = new kakao.maps.LatLng(lat_center, lng_center); // 마커(동심원)가 표시될 위치
@@ -99,7 +99,7 @@
                 var tmp_circle = new kakao.maps.Marker({
                     position: circlePosition,
                     image: circleImage,
-                    title: areaList[i].id // 아이디값을 넘겨줌 - 지역별 매장 리스트 불러오기 위해
+                    title: area_list[i].id // 아이디값을 넘겨줌 - 지역별 매장 리스트 불러오기 위해
                 });
 
                 circles.push(tmp_circle) //.append() 와 같은 역할
