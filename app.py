@@ -32,6 +32,7 @@ def salary():
             count = 1
             result['area{}'.format(count)] = (d[1],d[2])
             count += 1
+        print(result)
         return render_template('home.html',area_list=result)
     return render_template('salary.html')
 
