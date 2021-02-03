@@ -5,20 +5,129 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>MASL 마이슬세권</title>
         <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
+
     </head>
     <body>
-        <h1>MASL</h1>
-        <div class="map"></div>
-	        <script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=709bb0c5529d1e0f4d5cae31194fb77e"></script>
-	        <script>
-		        var container = document.getElementById('map');
-		        var options = {
-			        center: new kakao.maps.LatLng(33.450701, 126.570667),
-			        level: 3
-		        };
+        <div id="map" style="width:1000px;height:800px;"></div>
+        <script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=bfd237d5111220caae5d8699a59900cb"></script>
+        <script>
+            var container = document.getElementById('map'); //지도를 담을 영역의 DOM 레퍼런스
+            var options = { //지도를 생성할 때 필요한 기본 옵션
+                center: new kakao.maps.LatLng(37.483294, 126.997011), //지도의 중심좌표.
+                level: 7 //지도의 레벨(확대, 축소 정도)
+            };
+            
+            var map = new kakao.maps.Map(container, options); //지도 생성 및 객체 리턴
+            
+            // // HTML5의 geolocation으로 사용할 수 있는지 확인
+            // if (navigator.geolocation) {
 
-		        var map = new kakao.maps.Map(container, options);
-	</script>
+            // // GeoLocation으로 접속 위치 가져오기
+            // navigator.geolocation.getCurrentPosition(function (position) {
 
+            //     var lat = position.coords.latitude, // 사용자 위도 - 현재는 해당 변수 사용하지 않고 서울시 중심위도로 대체
+            //         lon = position.coords.longitude; // 사용자 경도 - 현재는 해당 변수 사용하지 않고 서울시 중심경도로 대체
+
+            //     var locPosition = new kakao.maps.LatLng(37.5642135, 127.0016985); // 마커가 표시될 위치를 얻어온 좌표로 생성
+
+            //     // 마커 표시
+            //     displayMarker(locPosition);
+            //     // 동심원 호출
+            //     circle();
+            // });
+
+            // } else { // HTML5의 GeoLocation을 사용할 수 없을 때
+
+            // var locPosition = new kakao.maps.LatLng(33.450701, 126.570667);
+
+            // displayMarker(locPosition);
+            // }
+
+            // 지도에 마커 표시하는 함수
+            function displayMarker(locPosition) {
+
+            // 마커 생성
+            var marker = new kakao.maps.Marker({
+                position: locPosition
+            });
+
+            // 지도 중심좌표를 접속위치로 변경
+            map.setCenter(locPosition);
+
+            // 마커가 지도 위에 표시되도록 설정
+            marker.setMap(map);  
+            }
+            function panTo (moveLat, moveLon) {
+            // 이동할 위도 경도 위치를 생성 - 원하는 행정동의 좌표로 이동하는 등.. 사용자 요청에 따른 좌표 필요
+            var moveLocation = new kakao.maps.LatLng(moveLat, moveLon);
+
+            // 지도 중심을 부드럽게 이동
+            // 이동할 거리가 지도 화면보다 크면 이펙트 없이 이동
+            map.panTo(moveLocation);            
+            }
+            function circle() {
+            
+            // 반복문으로 5개 지역 변수 할당 필요
+            var area_list = {{area_list}};
+
+            /* // 지역별 중심좌표 계산
+            var lat_center = (top_lat + btm_lat) / 2,
+                lng_center = (right_lng + left_lng) / 2;
+            */
+            // 지도에 표시할 원을 생성
+            var circle1 = new kakao.maps.Circle({
+                center : new kakao.maps.LatLng(37.493236, 127.056687),  // 동심원의 중심좌표 (강남구 대치1동)
+                radius: 800, // 미터 단위의 원의 반지름
+                strokeWeight: 5, // 선의 두께
+                strokeColor: '#5049c9', // 선의 색깔
+                strokeOpacity: 0, // 선의 불투명도
+                strokeStyle: 'solid', // 선의 스타일
+                fillColor: '#5049c9', // 채우기 색깔
+                fillOpacity: 0.5  // 채우기 불투명도
+            });
+
+            circle1.setMap(map); // 지도에 원 그리기
+
+            // 마우스오버 이벤트가 발생했을 때 변경할 채우기 옵션
+            var mouseoverOption = { 
+                fillColor: '#EFFFED', // 채우기 색깔
+                fillOpacity: 0.8 // 채우기 불투명도      
+            };
+
+            // 마우스아웃 이벤트가 발생했을 때 변경할 채우기 옵션
+            var mouseoutOption = {
+                fillColor: '#5049c9', // 채우기 색깔
+                fillOpacity: 0.5 // 채우기 불투명도      
+            };
+
+            // 마우스오버 이벤트를 등록
+            kakao.maps.event.addListener(circle1, 'mouseover', function() { 
+
+                // 채우기 옵션을 변경
+                circle1.setOptions(mouseoverOption);
+
+            });
+
+            kakao.maps.event.addListener(circle1, 'mouseout', function() { 
+
+                // 채우기 옵션을 변경
+                circle1.setOptions(mouseoutOption);
+
+            }); 
+
+            // 마우스다운 이벤트를 등록
+            kakao.maps.event.addListener(circle1, 'mousedown', function() { 
+                console.log(event);
+                // var resultDiv = document.getElementById('result');
+                // resultDiv.innerHTML = '지역이 선택되었습니다! (해당 지역으로 이동하는 기능 필요)';
+                var mapContainer = document.getElementById('map'), // 지도를 표시할 div 
+                    mapOption = {
+                        center: new kakao.maps.LatLng(circle1.getPosition().getLat(), circle1.getPosition().getLng()),
+                        level: 5 // 지도의 확대 레벨 
+                    };
+                var map2 = new kakao.maps.Map(mapContainer, mapOption); // 지도 생성
+            }); 
+            }
+            </script>
     </body>
 </html>
