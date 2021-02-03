@@ -17,7 +17,7 @@
 
 ` $ sudo mv mongodb-osx-x86_64-4.2.0 /usr/local/mongodb `
 
-` $ sudo chown donghyunjang ./data/db `
+` $ sudo chown {USER NAME} ./data/db `
 
 ` $ vi ~/.bash_profile `
 
