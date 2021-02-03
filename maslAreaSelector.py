@@ -155,8 +155,15 @@ def areaTop10(brand, data_l, address):
         d[3] = d[3] + 20 - haversine(home, [d[1],d[2]])
     data_l.sort(key=itemgetter(3), reverse=True)
     data_l = data_l[:5] # 임시로 5개만 출력
+    result = {
+        "area1": (data_l[0][1],data_l[0][2]),
+        "area2": (data_l[1][1],data_l[1][2]),
+        "area3": (data_l[2][1],data_l[2][2]),
+        "area4": (data_l[3][1],data_l[3][2]),
+        "area5": (data_l[4][1],data_l[4][2]),
+        }
     
-    return data_l
+    return result
 
 def searchTop10(data):
     search_keyword = ['병원', '은행', '동사무소']

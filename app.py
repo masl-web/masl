@@ -26,12 +26,7 @@ def salary():
         print(address)
         print(store_list)
         area = maslAreaSelector.maslAreaSelector(address)
-        data = maslAreaSelector.areaTop10(store_list, area, address)
-        result = {}
-        for d in data:
-            count = 1
-            result['area{}'.format(count)] = (d[1],d[2])
-            count += 1
+        result = maslAreaSelector.areaTop10(store_list, area, address)
         print(result)
         return render_template('home.html',area_list=result)
     return render_template('salary.html')
