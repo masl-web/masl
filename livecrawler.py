@@ -21,7 +21,7 @@ options.add_argument('lang=ko_KR') # 언어는 한국어
 
 # 크롬 드라이버 호출
 driver_path = "chromedriver" # 다운로드 : https://chromedriver.chromium.org/downloads
-driver = webdriver.Chrome(os.path.join(os.getcwd(), driver_path), options=options)
+driver = webdriver.Chrome(executable_path="./chromedriver", options=options)
 
 # 2개 브라우저 필요 (구글맵, 카카오맵)
 driver.execute_script('window.open("about:blank", "_blank");')
