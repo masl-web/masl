@@ -4,14 +4,16 @@
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>MASL 마이슬세권</title>
-        <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
+        <link rel="stylesheet" href="{{ url_for('static', filename='css/userinfo.css') }}">
     </head>
     <body>
         <header>
-            <img class='logo' src="{{ url_for('static', filename='images/logo.png') }}">
+            <div class='logo_container'>
+                <img class='logo' src="{{ url_for('static', filename='images/logo.png') }}">
+            </div>
         </header>
         <main>
-        <!-- <div class='init_popup'> -->
+        <div class='init_popup'>
             <fieldset class='field-container'>
                 <p class='info_title'>주소입력</p>
                 <form action='/UserInfo/salary' method='POST'>
@@ -51,8 +53,8 @@
                     <input type='submit' value='게시'>마이 슬세권 찾기</button>
                 </form>
             </fieldset>
+        </div>
         </main>
-            <!-- </div>
-        </div> -->
+            
     </body>
 </html>

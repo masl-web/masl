@@ -12,13 +12,8 @@ app = Flask(__name__)
 def init_page():
     return render_template('index.html')
 
-# 유정 유형 선택 페이지(직장인) 추후 학생 기타 추가 예정
-@app.route('/UserInfo')
-def UserInfo():
-    return(render_template('UserInfo.html'))
-
 # 유저 정보 입력 페이지
-@app.route('/UserInfo/salary', methods=('GET', 'POST'))
+@app.route('/UserInfo', methods=('GET', 'POST'))
 def salary():
     if request.method == 'POST':
         address = request.form['address'] # 직장 주소
@@ -29,7 +24,7 @@ def salary():
         result = maslAreaSelector.areaTop10(store_list, area, address)
         print(result)
         return render_template('home.html',area_list=result)
-    return render_template('salary.html')
+    return render_template('Userinfo.html')
 
 @app.route('/home', methods=('GET', 'POST'))
 def home():
