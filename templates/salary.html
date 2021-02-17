@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>MASL 마이슬세권</title>
+        <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
+    </head>
+    <body>
+        <header>
+            <img class='logo' src="{{ url_for('static', filename='images/logo.png') }}">
+        </header>
+        <main>
+        <!-- <div class='init_popup'> -->
+            <fieldset class='field-container'>
+                <p class='info_title'>주소입력</p>
+                <form action='/UserInfo/salary' method='POST'>
+                    학교주소 : <input type='text' class='field' name='address'><br>
+                    <p>카페</p>
+                        <input type='checkbox' id='chkok' name='store' value='starbucks'>스타벅스
+                        <input type='checkbox' id='chkok' name='store' value='폴바셋'>폴바셋
+                        <input type='checkbox' id='chkok' name='store' value='할리스'>할리스
+                        <input type='checkbox' id='chkok' name='store' value='엔젤리너스'>엔젤리너스
+                        <input type='checkbox' id='chkok' name='store' value='커피빈'>커피빈
+                        <input type='checkbox' id='chkok' name='store' value='공차'>공차
+                        기타 : <input type='text' id='chkok' name='store'><br>
+                        <p>패스트푸드</p>
+                        <input type='checkbox' id='chkok' name='store' value='맥도날드'>맥도날드
+                        <input type='checkbox' id='chkok' name='store' value='버거킹'>버거킹
+                        <input type='checkbox' id='chkok' name='store' value='서브웨이'>서브웨이
+                        <input type='checkbox' id='chkok' name='store' value='롯데리아'>롯데리아
+                        <input type='checkbox' id='chkok' name='store' value='이삭토스트'>이삭토스트
+                        기타 : <input type='text' id='chkok' name='store'><br>
+                    <p>편의점</p>
+                        <input type='checkbox' id='chkok' name='store' value='gs25'>gs25
+                        <input type='checkbox' id='chkok' name='store' value='cu'>cu
+                        <input type='checkbox' id='chkok' name='store' value='세븐일레븐'>세븐일레븐
+                        <input type='checkbox' id='chkok' name='store' value='미니스탑'>미니스탑
+                        <input type='checkbox' id='chkok' name='store' value='이마트24'>이마트24
+                    <p>유통매장</p>
+                        <input type='checkbox' id='chkok' name='store' value='올리브영'>올리브영
+                        <input type='checkbox' id='chkok' name='store' value='롭스'>롭스
+                        <input type='checkbox' id='chkok' name='store' value='랄라블라'>랄라블라
+                        기타 : <input type='text' id='chkok' name='store'><br>
+                    <p>마트</p>
+                        <input type='checkbox' id='chkok' name='store' value='이마트'>이마트
+                        <input type='checkbox' id='chkok' name='store' value='홈플러스'>홈플러스
+                        <input type='checkbox' id='chkok' name='store' value='롯데마트'>롯데마트
+                    <br>
+                    <br>
+                    <input type='submit' value='게시'>마이 슬세권 찾기</button>
+                </form>
+            </fieldset>
+        </main>
+            <!-- </div>
+        </div> -->
+    </body>
+</html>
