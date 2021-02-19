@@ -12,7 +12,7 @@
     <h1>MASL</h1>
     <div id="map" style="width:99%;height:90%;"></div>
     <script type="text/javascript"
-        src="//dapi.kakao.com/v2/maps/sdk.js?appkey=bfd237d5111220caae5d8699a59900cb"></script>
+        src="//dapi.kakao.com/v2/maps/sdk.js?appkey=c7aa4e274f4f8ca1eae60d350e5ebee9"></script>
     <script>
         // 로컬에서 실행 시 - cmd 에서 현재 폴더로 이동 -> python -m http.server 8080 실행 -> 크롬 브라우저에 http://localhost:8080
 
@@ -71,20 +71,6 @@
 
             // 현재 위치를 가라키는 마커가 지도 위에 표시되도록 설정
             marker.setMap(map);
-        }
-
-        function getAreaList() {
-            // app.py의 salary()에서 받아온 area_list 데이터를 아래 리스트에다 넣어서 반환하고 싶어요
-            var areaList = [];
-            $.ajax({
-                type: 'GET',
-                url: 'UserInfo/salary',
-                data: {},
-                success: function(response){
-                    areaList.push(response); // 데이터를 area_list에 push해서 넣기
-                }
-            });
-            return areaList
         }
 
         function drawCircle(areaList) { // 마커(동심원) 그리는 함수
