@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html></html>
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,16 +7,17 @@
         <link rel="stylesheet" href="{{ url_for('static', filename='css/userinfo.css') }}">
     </head>
     <body>
-        <header>
+        <header class='loading'>
             <div class='logo_container'>
                 <img class='logo' src="{{ url_for('static', filename='images/logo.png') }}">
             </div>
         </header>
-        <main>
-        <div class='init_popup'>
-            <fieldset class='field-container'>
-                <p class='info_title'>주소입력</p>
-                <form action='/UserInfo/salary' method='POST'>
+        <main class='loading'>
+        <div class="container">
+                <form action='/UserInfo' method='POST'>
+                    <div class='init_popup'>
+                        <fieldset class='field-container'>
+                        <p class='info_title'>주소입력</p>
                     학교주소 : <input type='text' class='field' name='address'><br>
                     <p>카페</p>
                         <input type='checkbox' id='chkok' name='store' value='starbucks'>스타벅스
@@ -50,11 +51,19 @@
                         <input type='checkbox' id='chkok' name='store' value='롯데마트'>롯데마트
                     <br>
                     <br>
-                    <input type='submit' value='게시'>마이 슬세권 찾기</button>
+                </fieldset>
+                </div> 
+                    <br>
+                    <div style="text-align: center;">
+                    <input class="enter" type='submit' value='마이 슬세권 찾기' onclick='Submit();'></button>
+                    </div>
                 </form>
-            </fieldset>
         </div>
         </main>
-            
+        <div id="loading">
+            <img src="../static/images/loading.gif" alt="loading">
+        </div>
     </body>
+    <script src="../static/js/jquery-3.5.1.js"></script>
+    <script src="../static/js/userinfo.js"></script>
 </html>
