@@ -24,9 +24,8 @@
 
         var map = new kakao.maps.Map(mapContainer, mapOption); // 지도 생성
 
-        var area_list = {{ area_list|safe }};
+        var areaList = {{ area_list|safe }};
 
-        console.log(area_list);
         // 선택된 마커(동심원)의 아이디 받아올 전역 변수 - 이게 있어야 지역(마커 아이디)을 선택해서 매장을 띄워요!
         var circle_id = null;
 
@@ -47,7 +46,7 @@
             });
 
             // 마커(동심원) 그리는 함수 호출하여 반환된 circles 배열을 다시 할당
-            var circles = drawCircle();
+            var circles = drawCircle(areaList);
 
             // 마커(동심원)별 클릭 이벤트 등록
             selectCircle(circles);
@@ -88,11 +87,7 @@
             return areaList
         }
 
-        function drawCircle() { // 마커(동심원) 그리는 함수
-
-            var areaList = [ // 임의로 생성한 데이터셋 - 원래 백엔드에서 인자로 받아야 함
-                
-            ];
+        function drawCircle(areaList) { // 마커(동심원) 그리는 함수
 
             var imageSrc = 'static/images/circle_1.png', // 마커 이미지(동심원)의 주소
                 imageSize = new kakao.maps.Size(80, 80), // 마커 이미지의 크기
