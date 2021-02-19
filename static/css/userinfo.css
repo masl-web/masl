@@ -1,0 +1,50 @@
+
+body {
+    position: absolute;
+    width: 100%;
+    height: auto;
+    background-color: #8c87e2;
+  }
+
+.logo_container{
+    height: 350px;
+}
+
+.logo{
+    position: absolute;
+    width: 20%;
+    height: auto;
+    top: 3%;
+    left: 50%;
+    transform: translate(-50%, -3%)
+}
+
+.init_popup {
+    position: relative;
+    width: 60%;
+    height: 300px;
+    overflow: auto;
+    background-color:white;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    border-radius: 50px;
+    box-shadow: 3px 3px  20px 2px black;
+}
+
+.init_popup::-webkit-scrollbar {
+    width: 10px;
+  }
+.init_popup::-webkit-scrollbar-thumb {
+    background-color: transparent;
+    border-radius: 10px;
+    background-clip: padding-box;
+  }
+.init_popup::-webkit-scrollbar-track {
+    background-color: transparent;
+    border-radius: 10px;
+  }
+
+.field-container{
+    border-width: 0px;
+}

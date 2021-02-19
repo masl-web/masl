@@ -1,0 +1,59 @@
+
+body {
+    position: absolute;
+    width: 100%;
+    height: auto;
+    background-color: #8c87e2;
+  }
+
+.logo_container{
+    height: 25vw;
+}
+
+.logo{
+    position: absolute;
+    width: 20%;
+    height: auto;
+    top: 3%;
+    left: 50%;
+    transform: translate(-50%, -3%)
+}
+
+.init_popup {
+    position: relative;
+    width: 60%;
+    height: 300px;
+    background-color:white;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    border-radius: 50px;
+    box-shadow: 3px 3px  20px 2px black;
+   }
+
+.enter {
+    position: relative;
+    left: 50%;
+    top: 80%;
+    transform: translate(-50%, -50%);
+    width: 120px;
+    height: 40px;
+    color: black;
+    font-size: 16px;
+    border: 10px;
+    border-color: #7401DF;
+    border-radius: 20px;
+}
+
+.enter:focus {
+    outline: 0;
+}
+
+.enter:hover {
+    background-color: #7401DF;
+    color: white;
+}
+
+.slides{
+    height: 250px;
+}
