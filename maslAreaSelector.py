@@ -31,6 +31,13 @@ def getGeoCode(address):
     else:
         match_first = result['documents'][0]['address']
         return float(match_first['y']), float(match_first['x'])
+# 위성좌표값 >> 행정구역 반환(KakaoMap)
+def regionName(lat, lng):
+    url = 'https://dapi.kakao.com/v2/local/geo/coord2regioncode.json?{}'.format("x={0}&y={1}".format(lng, lat))
+    headers = {"Authorization": "KakaoAK db80de33bb89c7f47c6cb2948ca14e90"}
+    result = json.loads(str(requests.get(url, headers=headers).text))
+    regal_region = result['documents'][1]['address_name']
+    return regal_region
 
 # User가 입력한 [회사/학교/기타] 주소 0.5km 내에 있는 지하철 역 리스트 stations 반환
 def nearMetro(home):
@@ -141,35 +148,42 @@ def maslAreaSelector(address):
 # maslAreaSelector 함수에서 반환된 data 리스트 중 User가 선택한 매장이 밀집한 지역과 거리를 기준으로 TOP10 지역 리스트 data 반환 (거리 알고리즘 개선 필요)
 def areaTop10(brand, data_l, address):
     home = getGeoCode(address)
-    query = {"brand": {"$in": brand}}
-    for s in store_col.find(query):
-        for i in range(0, len(data_l)):
-            if haversine([data_l[i][1],data_l[i][2]],[s["geo_lat"],s["geo_lng"]]) <= 0.5:
-                if len(data_l[i]) == 3:
-                    data_l[i].append(1)
-                elif len(data_l[i]) == 4:
-                    data_l[i][3] += 1
-            elif len(data_l[i]) == 3:
-                data_l[i].append(0)
-    for d in data_l:
-        d[3] = d[3] + 20 - haversine(home, [d[1],d[2]])
+
+    for i in range(0, len(data_l)):
+        if len(data_l[i]) == 3:
+            data_l[i].insert(0, 0)
+        query = {"$and": 
+                [{"brand": {"$in": brand}}, 
+                {"$and": [{"geo_lat": {"$lte": data_l[i][2]+0.009}}, {"geo_lat": {"$gte": data_l[i][2]-0.009}}]},
+                {"$and": [{"geo_lng": {"$lte": data_l[i][3]+0.009}}, {"geo_lng": {"$gte": data_l[i][3]-0.009}}]}
+                ]}
+        for s in store_col.find(query):
+            if haversine([data_l[i][2],data_l[i][3]],[s["geo_lat"],s["geo_lng"]]) <= 0.5:
+                data_l[i][0] += 1
+
+    for data in data_l:
+        data[0] = data[0] + 20 - haversine(home, [data[2], data[3]])
     data_l.sort(key=itemgetter(3), reverse=True)
     data_l = data_l[:5] # 임시로 5개만 출력
-    result = {
-        "area1": (data_l[0][1],data_l[0][2]),
-        "area2": (data_l[1][1],data_l[1][2]),
-        "area3": (data_l[2][1],data_l[2][2]),
-        "area4": (data_l[3][1],data_l[3][2]),
-        "area5": (data_l[4][1],data_l[4][2]),
-        }
-    
+    result = []
+    for line in data_l[:5]:
+        count = 1
+        temp={}
+        temp['id'] = count
+        temp['lat'] = line[2]
+        temp['lng'] = line[3]
+        temp['area_name'] = regionName(line[2], line[3])
+        result.append(temp)
     return result
 
+
+
+'''
 def searchTop10(data):
     search_keyword = ['병원', '은행', '동사무소']
     for i in data:
         url = 'https://dapi.kakao.com/v2/local/geo/coord2regioncode.json?{}'.format("x={0}&y={1}".format(i[2],i[1]))
-        headers = {"Authorization": "KakaoAK db80de33bb89c7f47c6cb2948ca14e90"}
+        headers = {"Authorization": "KakaoAK fc1a434c73667b0fe3707f6023b3cc81"}
         result = json.loads(str(requests.get(url, headers=headers).text))
         regal_area = result['documents'][1]['address_name']
         regal_region = result['documents'][1]['region_2depth_name']
@@ -179,20 +193,19 @@ def searchTop10(data):
             for keyword in search_keyword:
                 print("3")
                 livecrawler.area_crawler(regal_area, keyword)
-                time.sleep(4)
                 print("4")
+'''
 
+# address = '서울시 서초구 서초중앙로 65'
+# brand = ["starbucks", "맥도날드","GS25","올리브영","cu","세븐일레븐"]
 
+# data = maslAreaSelector(address)
+# start = time.time()
+# result = areaTop10(brand, data, address)
 
-        
-
-
-
-address = '서울시 서초구 서초중앙로 65'
-brand = ["starbucks", "맥도날드"]
-data = maslAreaSelector(address)
-result = areaTop10(brand, data, address)
-print(result)
+# print(time.time()-start)
+# print(result)
+# print(start-time.time())
 
 
 
