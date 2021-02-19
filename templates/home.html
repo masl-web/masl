@@ -24,6 +24,9 @@
 
         var map = new kakao.maps.Map(mapContainer, mapOption); // 지도 생성
 
+        var area_list = {{ area_list }};
+
+        console.log(area_list);
         // 선택된 마커(동심원)의 아이디 받아올 전역 변수 - 이게 있어야 지역(마커 아이디)을 선택해서 매장을 띄워요!
         var circle_id = null;
 
@@ -71,14 +74,24 @@
             marker.setMap(map);
         }
 
+        function getAreaList() {
+            // app.py의 salary()에서 받아온 area_list 데이터를 아래 리스트에다 넣어서 반환하고 싶어요
+            var areaList = [];
+            $.ajax({
+                type: 'GET',
+                url: 'UserInfo/salary',
+                data: {},
+                success: function(response){
+                    areaList.push(response); // 데이터를 area_list에 push해서 넣기
+                }
+            });
+            return areaList
+        }
+
         function drawCircle() { // 마커(동심원) 그리는 함수
 
             var areaList = [ // 임의로 생성한 데이터셋 - 원래 백엔드에서 인자로 받아야 함
-                { id: 1, left_top: { lat: 37.5253635, lng: 126.9858928 }, right_top: { lat: 37.5253635, lng: 126.9948859 }, right_bottom: { lat: 37.5104209, lng: 126.9948859 }, left_bottom: { lat: 37.5104209, lng: 126.9858928 }, area_name: "서울시 00구 00동" },
-                { id: 2, left_top: { lat: 37.7046747, lng: 127.0488445 }, right_top: { lat: 37.7046747, lnglng: 127.0578376 }, right_bottom: { lat: 37.6897321, lng: 127.0578376 }, left_bottom: { lat: 37.6897321, lng: 127.0488445 }, area_name: "서울시 00구 00동" },
-                { id: 3, left_top: { lat: 37.495478299999995, lng: 127.1297824 }, right_top: { lat: 37.495478299999995, lng: 127.1387755 }, right_bottom: { lat: 37.4805357, lng: 127.1387755 }, left_bottom: { lat: 37.4805357, lng: 127.1297824 }, area_name: "서울시 00구 00동" },
-                { id: 4, left_top: { lat: 37.6449043, lng: 127.0848169 }, right_top: { lat: 37.6449043, lng: 127.09381 }, right_bottom: { lat: 37.6299617, lng: 127.09381 }, left_bottom: { lat: 37.6299617, lng: 127.0848169 }, area_name: "서울시 00구 00동" },
-                { id: 5, left_top: { lat: 37.5701913, lng: 126.9049549 }, right_top: { lat: 37.5701913, lng: 126.913948 }, right_bottom: { lat: 37.5552487, lng: 126.913948 }, left_bottom: { lat: 37.5552487, lng: 126.9049549 }, area_name: "서울시 00구 00동" }
+                
             ];
 
             var imageSrc = 'static/images/circle_1.png', // 마커 이미지(동심원)의 주소
@@ -89,8 +102,8 @@
 
             for (var i = 0; i < areaList.length; i++) { // areaList에 있는 TOP5영역 수만큼 반복하여 마커(동심원) 객체 생성
 
-                var lat_center = (areaList[i].left_top.lat + areaList[i].left_bottom.lat) / 2, // 중심 좌표 계산
-                    lng_center = (areaList[i].left_top.lng + areaList[i].right_top.lng) / 2;
+                var lat_center = areaList[i].lat,
+                    lng_center = areaList[i].lng;
 
                 var circleImage = new kakao.maps.MarkerImage(imageSrc, imageSize, imageOption), //마커(동심원) 이미지 적용
                     circlePosition = new kakao.maps.LatLng(lat_center, lng_center); // 마커(동심원)가 표시될 위치
