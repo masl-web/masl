@@ -22,7 +22,7 @@ def salary():
         result = maslAreaSelector.areaTop10(store_list, area, address)
         return render_template('home.html',area_list=result)
     else:
-        return render_template('userinfo.html')
+        return render_template('Userinfo.html')
 
 @app.route('/home', methods=('GET', 'POST'))
 def home():
