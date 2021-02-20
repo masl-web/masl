@@ -6,15 +6,6 @@ from operator import itemgetter
 import time
 
 
-# MongoDB 연결 (localhost:27017은 default, 추후 변경)import json
-import requests
-import pymongo
-from haversine import haversine
-from operator import itemgetter
-import livecrawler
-import time
-
-
 # MongoDB 연결 (localhost:27017은 default, 추후 변경)
 masl_client = pymongo.MongoClient('mongodb://localhost:27017/')
 
