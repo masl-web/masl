@@ -2,7 +2,7 @@ import pymongo
 import pandas as pd
 from haversine import haversine
 
-masl_client = pymongo.MongoClient('mongodb://localhost:27017/')
+masl_client = pymongo.MongoClient('mongodb://admin:devpass@localhost:27017/')
 
 db = masl_client['LocationData']
 store_col = db['StoreData']

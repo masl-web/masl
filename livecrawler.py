@@ -196,7 +196,7 @@ def getGeoCode(address):
     url = 'https://dapi.kakao.com/v2/local/search/address.json?query={}'.format(address)
 
     # KAKAO REST API 토큰 인증 - 2021/1/21 부터 2개월 유효
-    headers = {"Authorization": "KakaoAK db80de33bb89c7f47c6cb2948ca14e90"}
+    headers = {"Authorization": "KakaoAK 6f3c5c2ae909068ed7155b2e79237b82"}
 
     # url 로 위경도 정보 호출
     result = json.loads(str(requests.get(url, headers=headers).text))

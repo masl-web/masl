@@ -1,16 +1,21 @@
+import os
 import json
 import requests
 import argparse
-
-import os
 from time import sleep
 
+from bs4 import BeautifulSoup
 from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
 from selenium.common.exceptions import ElementNotInteractableException
-from bs4 import BeautifulSoup
 
 import pandas as pd
+import pymongo
+
+masl_client = pymongo.MongoClient('mongodb://localhost:27017/')
+
+db = masl_client['LocationData']
+store_col = db['StoreData']
 
 # 크롬 드라이버 옵션 설정
 options = webdriver.ChromeOptions()
@@ -18,7 +23,7 @@ options.add_argument('headless') # 브라우저 창 안 뜨도록 프로그램 �
 options.add_argument('lang=ko_KR') # 언어는 한국어
 
 # 크롬 드라이버 호출
-driver_path = "tools/chromedriver.exe" # 다운로드 : https://chromedriver.chromium.org/downloads
+driver_path = "chromedriver" # 다운로드 : https://chromedriver.chromium.org/downloads
 driver = webdriver.Chrome(os.path.join(os.getcwd(), driver_path), options=options)
 
 def main():
@@ -55,7 +60,7 @@ def main():
     print(df_total)
 
     # 크롤링 후 .csv 로 변환
-    df_total.to_csv("raw_data/"+output_csv_name)
+    df_total.to_csv("BackData/"+output_csv_name)
 
     # 웹드라이버 셧 다운
     driver.quit()
@@ -132,6 +137,8 @@ def crawling(store_lists, store, df):
         # 매장 이름
         store_name = place.select('.head_item > .tit_name > .link_name')[0].text
 
+        store_brand = store_name.split(" ")[0]
+
         # 매장 주소
         store_addr = place.select('.info_item > .addr > p')[0].text
         addr_list = store_addr.split(" ")
@@ -142,26 +149,32 @@ def crawling(store_lists, store, df):
         store_type = place.select('.head_item > span')[0].text
 
         # 매장 위도 경도
-        store_geo_lat, store_geo_lng = getGeoCode(store_addr)
+        store_geo_lat, store_geo_lng = geocode(store_addr)
 
-        print('매장명:', store_name, '| 매장주소: ', store_addr,'| 매장분류:', store_type)
-        print('위도:', store_geo_lat, '| 경도:', store_geo_lng)
-        print('----------------------------------------------------------------------')
+        if (store_geo_lat != "-" and store_geo_lat != "-"):
 
-        # 데이터프레임에 데이터 .append
-        df = df.append(pd.DataFrame([['-', store_type, store, store_name, store_addr, store_geo_lat, store_geo_lng]], columns=['store_id', 'store_type', 'store_brand', 'store_name', 'store_addr','store_geo_lat','store_geo_lng']))
+            # 로그 출력
+            print('매장명:', store_name, '| 매장브랜드:', store_brand, '| 매장주소: ', store_addr,'| 매장분류:', store_type)
+            print('위도:', store_geo_lat, '| 경도:', store_geo_lng)
+            print('----------------------------------------------------------------------')
+
+            # MongoDB에 데이터 추가
+            df = df.append(pd.DataFrame([['-', store_type, store_brand, store_name, store_addr, store_geo_lat, store_geo_lng]], columns=['store_id', 'store_type', 'store_brand', 'store_name', 'store_addr','store_geo_lat','store_geo_lng']))
+            store_col.insert({"type": store_type, "brand": store_brand, "store_name": store_name, "store_address": store_addr, "geo_lat": store_geo_lat, "geo_lng": store_geo_lng})
+        else:
+            pass
 
     return df
         # 웹드라이버 임시 종료 - 종료하면 세션 만료로 오류 발생해서 주석 처리
         # driver.close()
 
 # KAKAO MAP API 연동하여 위도 경도 받아오는 함수
-def getGeoCode(address):
+def geocode(address):
 
     # 주소 정보 입력
     url = 'https://dapi.kakao.com/v2/local/search/address.json?query={}'.format(address)
 
-    # KAKAO REST API 토큰 인증 - 2021/1/21 부터 2개월 유효
+    # KAKAO REST API 토큰 인증 - 2021/3/9 21:00 신규 등록
     headers = {"Authorization": "KakaoAK 6f3c5c2ae909068ed7155b2e79237b82"}
 
     # url 로 위경도 정보 호출
