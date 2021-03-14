@@ -174,7 +174,7 @@ def geocode(address):
     # 주소 정보 입력
     url = 'https://dapi.kakao.com/v2/local/search/address.json?query={}'.format(address)
 
-    # KAKAO REST API 토큰 인증 - 2021/3/9 21:00 신규 등록
+    # KAKAO REST API 토큰 인증 - 2021/3/15 8:25 토큰 갱신 (2달간 유효)
     headers = {"Authorization": "KakaoAK 6f3c5c2ae909068ed7155b2e79237b82"}
 
     # url 로 위경도 정보 호출
