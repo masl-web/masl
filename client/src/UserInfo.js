@@ -288,11 +288,11 @@ function UserInfo() {
     function handleSubmit(e){
         e.preventDefault();
         const brand = [
-            ...userCafe,
-            ...userFastfood,
-            ...userDrugstore,
-            ...userConvenience,
-            ...userMart
+            ...Array.from(userCafe),
+            ...Array.from(userFastfood),
+            ...Array.from(userDrugstore),
+            ...Array.from(userConvenience),
+            ...Array.from(userMart)
         ];
           
         console.log(brand);
