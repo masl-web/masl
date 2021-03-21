@@ -149,9 +149,12 @@ def allBusStop(bus_line):
 
 # MASL 1차 탐색 대상 지역 추출 함수, 결과값으로 data 리스트 반환
 def maslAreaSelector(address):
+    print('address: ', address) # 인자 잘 넘어옴
     home = getGeoCode(address)
+    print('home: ', home) # 위성좌표 잘 반환함
     if home[0] != str:
         bus_stop = nearBusStop(home)
+        print('bus_stop : ', bus_stop) # None 값 반환 - nearBusStop 함수 확인 필요
         if bus_stop != None:
             bus_line = allBusLine(bus_stop)
             all_bus_stop = allBusStop(bus_line)
@@ -211,9 +214,9 @@ def areaTop10(brand, data_l, address):
             price_score.append(round(regionScore(data[2], data[3])/2, 2))
         
     # 브랜드점수(1~20), 거리점수(1~20), 월세점수(1~20) 이 되도록 알파값 구해서 곱해주기
-    brand_alpha = 20/(max(brand_score) - min(brand_score))
-    distance_alpha =  20/(max(distance_score) - min(distance_score))
-    price_alpha =  20/(max(price_score) - min(price_score))
+    brand_alpha = 21/(max(brand_score) - min(brand_score)+1)
+    distance_alpha =  21/(max(distance_score) - min(distance_score)+1)
+    price_alpha =  21/(max(price_score) - min(price_score)+1)
     for data in data_l:
         if type(data[0]) != int:
             data[0] = data[0][0]*brand_alpha + data[0][1]*distance_alpha + data[0][2]*price_alpha
@@ -245,8 +248,6 @@ def areaTop10(brand, data_l, address):
     
     return result
 
-
-
 '''
 def searchTop10(data):
     search_keyword = ['병원', '은행', '동사무소']
@@ -264,15 +265,3 @@ def searchTop10(data):
                 livecrawler.area_crawler(regal_area, keyword)
                 print("4")
 '''
-
-address = '서울시 서초구 서초중앙로 65'
-brand = ["스타벅스", "맥도날드","GS25","올리브영","cu","세븐일레븐"]
-
-data = maslAreaSelector(address)
-start = time.time()
-result = areaTop10(brand, data, address)
-
-print(time.time()-start)
-print(result)
-print(start-time.time())
-
