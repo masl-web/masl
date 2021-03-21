@@ -4,6 +4,7 @@ import pymongo
 from haversine import haversine
 from operator import itemgetter
 import time
+import pandas as pd
 
 # MongoDB 연결 (localhost:27017은 default, 추후 변경)
 masl_client = pymongo.MongoClient('mongodb://localhost:27017/')
@@ -46,7 +47,7 @@ def regionName(lat, lng):
     return regal_region
 
 # 행정구역에 따른 점수 반환(가격이 높은 강남구는 낮게, 가격이 낮은 도봉구는 높게)
-def regionScore(lat, lng):
+def regionScore(region_name):
     # 서울 원룸 평균 월세
     region_dict = {
         '강남구':66, '강동구':45, '강북구':41, '강서구':39,
@@ -57,14 +58,10 @@ def regionScore(lat, lng):
         '용산구':47, '은평구':40, '종로구':50, '중구':54,
         '중랑구':43
     }
-    url = 'https://dapi.kakao.com/v2/local/geo/coord2regioncode.json?{}'.format("x={0}&y={1}".format(lng, lat))
-    headers = {"Authorization": "KakaoAK 6f3c5c2ae909068ed7155b2e79237b82"}
-    result = json.loads(str(requests.get(url, headers=headers).text))
-    regal_region = result['documents'][1]['region_2depth_name']
-    if regal_region not in region_dict:
+    if region_name not in region_dict:
         score = -100
     else: 
-        score = region_dict[regal_region]
+        score = region_dict[region_name]
         score = abs(66/score)**5
     return score
 
@@ -103,6 +100,7 @@ def allMetroLineStations(lines):
                 temp.append(m['station_name'])
                 temp.append(m['geo_lat'])
                 temp.append(m['geo_lng'])
+                temp.append(m['region_name'])
                 all_metro_station.append(temp)
                 allStationName.append(m['station_name'])
     return all_metro_station
@@ -123,16 +121,17 @@ def nearBusStop(home):
 def allBusLine(bus_stop):
     bus_line = []
     for s in bus_stop:
-        for l in bus_lines_col.find():
-            if int(s) == l['station_id']:
-                bus_line.append(l['bus_line'])
+        query = {"bus_line" : {"station_id": s}}
+        print("테스트:", bus_stop_col.find(query))
+        
     return bus_line
 
 # allBusLine 함수에서 반환된 bus_line 리스트의 버스 노선이 지나는 모든 버스 정류장 리스트 all_bus_stop 반환
 def allBusStop(bus_line):
     all_bus_stop = []
     count = []
-    for l in bus_line:
+    print(bus_line)
+    for l in bus_line: # N61, 6000, 740 .....
         for b in bus_lines_col.find():
             if l == b['bus_line']:
                 temp = []
@@ -143,7 +142,8 @@ def allBusStop(bus_line):
                     for x in bus_stop_col.find(query):
                         temp.append(x['geo_lat'])
                         temp.append(x['geo_lng'])
-                    if len(temp) ==3:
+                        temp.append(x['region_name'])
+                    if len(temp) == 4:
                         all_bus_stop.append(temp)
     return all_bus_stop
 
@@ -153,12 +153,13 @@ def maslAreaSelector(address):
     home = getGeoCode(address)
     print('home: ', home) # 위성좌표 잘 반환함
     if home[0] != str:
-        bus_stop = nearBusStop(home)
-        print('bus_stop : ', bus_stop) # None 값 반환 - nearBusStop 함수 확인 필요
+        bus_stop = nearBusStop(home) # None 값 반환 - nearBusStop 함수 확인 필요
+        start = time.time()
         if bus_stop != None:
             bus_line = allBusLine(bus_stop)
             all_bus_stop = allBusStop(bus_line)
             stations = nearMetro(home)
+            print('all_bus_stop 시간: ', time.time() - start)
             if stations != None:
                 lines = getMetroLine(stations)
                 all_metro_station = allMetroLineStations(lines)
@@ -183,11 +184,13 @@ def areaTop10(brand, data_l, address):
     distance_score = []
     price_score = []
     home = getGeoCode(address)
+
     for b in brand:
         if b == '':
             brand.remove(b)
+
     for i in range(0, len(data_l)):
-        if len(data_l[i]) == 3:
+        if len(data_l[i]) == 4:
             data_l[i].insert(0, [])
         query = {"$and": 
                 [{"brand": {"$in": brand}}, 
@@ -200,31 +203,34 @@ def areaTop10(brand, data_l, address):
                     pass
                 else:
                     data_l[i][0].append(s['brand'])
+    df = pd.DataFrame(data_l)
+    print(df)
+    df.mean()
 
     for data in data_l:
         data[0] = len(data[0])
         # 서울이 아닌 지역이 나오는 경우
-        if regionScore(data[2], data[3]) == -100:
+        if regionScore(data[4]) == -100:
             data[0] = 0
         else:
             # 브랜드점수, 거리점수, 월세점수 넣어주기
             brand_score.append(round(data[0]*20/len(brand), 2))
-            data[0] = [data[0]*20/len(brand), 11 - ((haversine(home, (data[2], data[3])))/11)**2,regionScore(data[2], data[3])/2]
+            data[0] = [data[0]*20/len(brand), 11 - ((haversine(home, (data[2], data[3])))/11)**2,regionScore(data[4])/2]
             distance_score.append(round(11 - ((haversine(home, (data[2], data[3])))/11)**2 ,2))
-            price_score.append(round(regionScore(data[2], data[3])/2, 2))
-        
+            price_score.append(round(regionScore(data[4])/2, 2))
     # 브랜드점수(1~20), 거리점수(1~20), 월세점수(1~20) 이 되도록 알파값 구해서 곱해주기
     brand_alpha = 21/(max(brand_score) - min(brand_score)+1)
     distance_alpha =  21/(max(distance_score) - min(distance_score)+1)
     price_alpha =  21/(max(price_score) - min(price_score)+1)
+
     for data in data_l:
         if type(data[0]) != int:
             data[0] = data[0][0]*brand_alpha + data[0][1]*distance_alpha + data[0][2]*price_alpha
     data_l.sort(key=itemgetter(0), reverse=True)
     result_list = []
     result_list.append(data_l[0])
-
     # 근접거리가 3km 이하인 지역을 제외
+
     for i in range(1, len(data_l)):
         temp = 0
         for r in result_list:
@@ -234,9 +240,10 @@ def areaTop10(brand, data_l, address):
             result_list.append(data_l[i])
         if len(result_list) >= 5:
             break
-    
+
     result = []
     count = 1
+
     for line in result_list:
         temp={}
         temp["id"] = count
@@ -245,7 +252,6 @@ def areaTop10(brand, data_l, address):
         temp["area_name"] = regionName(line[2], line[3])
         count += 1
         result.append(temp)
-    
     return result
 
 '''
@@ -265,3 +271,11 @@ def searchTop10(data):
                 livecrawler.area_crawler(regal_area, keyword)
                 print("4")
 '''
+
+address = '서울시 강남구 테헤란로 242'
+brand = ["스타벅스", "맥도날드","GS25","올리브영","cu","세븐일레븐"]
+
+data = maslAreaSelector(address)
+start = time.time()
+result = areaTop10(brand, data, address)
+print("areaTop10 걸린시간 :", time.time()-start)
