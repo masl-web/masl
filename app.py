@@ -25,11 +25,13 @@ def salary():
         userInfo = request.get_json() 
         address = userInfo.get('address')# 직장 주소f
         store_list = userInfo.get('brand') # 매장 선택 정보
-        print(address)
-        print(store_list)
+        print('address :', address)
+        print('store_list :', store_list)
         start_time = time.time()
         area = maslAreaSelector(address)
+        print('area: ', area)
         result = areaTop10(store_list, area, address)
+        print('result: ', result)
         print('걸린시간: ', time.time() - start_time)
         return jsonify(areaList = result)
         # return render_template('home.html',area_list=result)
