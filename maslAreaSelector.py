@@ -272,10 +272,10 @@ def searchTop10(data):
                 print("4")
 '''
 
-address = '서울시 강남구 테헤란로 242'
-brand = ["스타벅스", "맥도날드","GS25","올리브영","cu","세븐일레븐"]
+# address = '서울시 강남구 테헤란로 242'
+# brand = ["스타벅스", "맥도날드","GS25","올리브영","cu","세븐일레븐"]
 
-data = maslAreaSelector(address)
-start = time.time()
-result = areaTop10(brand, data, address)
-print("areaTop10 걸린시간 :", time.time()-start)
+# data = maslAreaSelector(address)
+# start = time.time()
+# result = areaTop10(brand, data, address)
+# print("areaTop10 걸린시간 :", time.time()-start)
