@@ -1,8 +1,10 @@
 import pymongo
 import pandas as pd
 from haversine import haversine
+import json
+import requests
 
-masl_client = pymongo.MongoClient('mongodb://admin:devpass@localhost:27017/')
+masl_client = pymongo.MongoClient('mongodb://localhost:27017/')
 
 db = masl_client['LocationData']
 store_col = db['StoreData']
@@ -11,23 +13,36 @@ bus_stop_col = db['BusStopData']
 bus_lines_col = db['BusLinesData']
 env_col = db['EnvironmentData']
 
+def regionName(lat, lng):
+    url = 'https://dapi.kakao.com/v2/local/geo/coord2regioncode.json?{}'.format("x={0}&y={1}".format(lng, lat))
+    headers = {"Authorization": "KakaoAK 6f3c5c2ae909068ed7155b2e79237b82"}
+    result = json.loads(str(requests.get(url, headers=headers).text))
+    regal_region = result['documents'][1]['region_2depth_name']
+    return regal_region
+
 # 지하철 역 csv 파일 몽고db에 초기 값으로 저장
 if metro_col.find({}) == None:
     metro = pd.read_csv('BackData/metro_station_seoul_final.csv', encoding='cp949')
+    count = 1
     for i in range(0,443):
+        print(count/443)
+        count += 1
         if " " not in metro.loc[i][1]:
             pass
         else:
             metro_col.insert({"type": "Metro", "line": metro.loc[i][1].split(" ")[1],
                             "station_name": metro.loc[i][1].split(" ")[0], "station_address": metro.loc[i][2],
-                            "geo_lat": metro.loc[i][3], "geo_lng": metro.loc[i][4]})
+                            "geo_lat": metro.loc[i][3], "geo_lng": metro.loc[i][4], "region_name": regionName(metro.loc[i][3], metro.loc[i][4])})
 
 # 버스정류장 csv 파일 몽고db에 초기 값으로 저장
 if bus_stop_col.find({}) == None:
     bus_stop = pd.read_csv('BackData/bus_stop_seoul_final.csv', encoding='cp949')
+    df = pd.read_csv('BackData/seoul_busline_info.csv', encoding='utf-8')
     for i in range(0,11178):
+        temp_list= df[df["정류소ID"] == (int(bus_stop.loc[i][2]))]["노선명"].values.tolist()
         bus_stop_col.insert({"type": "BusStop", "station_name": bus_stop.loc[i][1], "station_id": str(bus_stop.loc[i][2]), 
-                        "geo_lat": bus_stop.loc[i][4], "geo_lng": bus_stop.loc[i][5]})
+                        "geo_lat": bus_stop.loc[i][4], "geo_lng": bus_stop.loc[i][5], "region_name": regionName(bus_stop.loc[i][4], bus_stop.loc[i][5]), 
+                        "bus_line": temp_list })
 
 if bus_lines_col.find({}) == None:
     bus_lines = pd.read_csv('BackData/seoul_busline_info.csv', encoding='utf-8')
@@ -86,3 +101,5 @@ def searchStoreData(target_location, store_type, brand):
         return store_list
     else:
         return False
+
+
