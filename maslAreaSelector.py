@@ -7,7 +7,7 @@ import time
 import pandas as pd
 
 # MongoDB 연결 (localhost:27017은 default, 추후 변경)
-masl_client = pymongo.MongoClient('mongodb://localhost:27017/')
+masl_client = pymongo.MongoClient(host='host.docker.internal', port=27017)
 
 # MASL용 데이터베이스 LocationData 생성
 db = masl_client['LocationData']
@@ -123,7 +123,7 @@ def allBusLine(bus_stop):
     for s in bus_stop:
         query = {"bus_line" : {"station_id": s}}
         print("테스트:", bus_stop_col.find(query))
-        
+
     return bus_line
 
 # allBusLine 함수에서 반환된 bus_line 리스트의 버스 노선이 지나는 모든 버스 정류장 리스트 all_bus_stop 반환
