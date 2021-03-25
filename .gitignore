@@ -1,3 +1,7 @@
 __pycache__/
-.DS_Store
-data/db
+.ipynb_checkpoints/
+MASL기획자료/
+mongodb-macos-x86_64-4.4.3.tgz
+untitled.ipynb
+docker/
+ex/
