@@ -7,7 +7,7 @@ import time
 import pandas as pd
 
 # MongoDB 연결 (localhost:27017은 default, 추후 변경)
-masl_client = pymongo.MongoClient('mongodb://localhost:27017/')
+masl_client = pymongo.MongoClient('mongodb://[root계정]:[root비밀번호]@localhost:27017/')
 
 # MASL용 데이터베이스 LocationData 생성
 db = masl_client['LocationData']

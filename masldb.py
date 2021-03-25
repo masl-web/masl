@@ -4,7 +4,7 @@ from haversine import haversine
 import json
 import requests
 
-masl_client = pymongo.MongoClient('mongodb://localhost:27017/')
+masl_client = pymongo.MongoClient('mongodb://[root계정]:[root비밀번호]@localhost:27017/')
 
 db = masl_client['LocationData']
 store_col = db['StoreData']
@@ -62,7 +62,7 @@ if env_col.find({}) == None:
 
 # db에 매장이름과 매장주소가 없을 시 store 컬렉션에 추가
 def addStoreData(store_type, brand, store_name, store_address, geo_lat, geo_lng):
-    query = {"$and": [{"store_name": store_name}, {"store_address": store_addr}]}
+    query = {"$and": [{"store_name": store_name}, {"store_address": store_address}]}
     if store_col.find(query).count() == 0:
         store_col.insert({"type": store_type,
                         "brand": brand,

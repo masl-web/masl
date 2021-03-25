@@ -12,7 +12,7 @@ from selenium.common.exceptions import ElementNotInteractableException
 import pandas as pd
 import pymongo
 
-masl_client = pymongo.MongoClient('mongodb://localhost:27017/')
+masl_client = pymongo.MongoClient('mongodb://[root계정]:[root비밀번호]@localhost:27017/')
 
 db = masl_client['LocationData']
 store_col = db['StoreData']
