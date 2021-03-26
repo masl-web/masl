@@ -3,6 +3,7 @@ import { Redirect, useHistory } from 'react-router';
 import { Switch, Route, Link, BrowserRouter as Router } from "react-router-dom";
 import axios from 'axios';
 import { Container, Row, Col, Card } from 'react-bootstrap';
+import 'bootstrap/dist/css/bootstrap.min.css';
 import Navbar from 'react-bootstrap/Navbar';
 import './App.css';
 import { Paper, makeStyles, Grid } from '@material-ui/core';
