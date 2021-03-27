@@ -283,7 +283,7 @@ function UserInfo() {
     const [userDrugstore, setUserDrugstore] = useState(new Set());
     const [userConvenience, setUserConvenience] = useState(new Set());
     const [userMart, setUserMart] = useState(new Set());
-
+    /* code by 성민 */
     const openModal = () => {
         setModalOpen(true);
     }
@@ -323,6 +323,7 @@ function UserInfo() {
     
     return (
         <>
+            {/* code by 성민 */}
             <Row>
                 <Form>
                     <Form.Control 
