@@ -17,7 +17,6 @@ import AreaDetail from './AreaDetail';
 import UserInfo from './UserInfo';
 
 import ModifiedUserInfo from './ModifiedUserInfo';
-import withHover1 from './withHover1';
 
 export default function App() {
 
@@ -29,8 +28,8 @@ export default function App() {
         <Route path="/masl" component={Masl} />
         <Route path="/detail" component={AreaDetail} />
 
-        <Route path="/temp" component={ModifiedUserInfo} />
-        <Route path="/hover" component={withHover1} />
+        <Route path="/temp" component={ModifiedUserInfo} /> 
+        {/* hover 부분 변경한 UserInfo 페이지 /temp에 라우팅 by 이슬 */}
       </Switch>
     </Router>
   )
