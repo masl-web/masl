@@ -11,6 +11,32 @@ from maslAreaSelector import maslAreaSelector, areaTop10
 
 app = Flask(__name__)
 
+from flask_migrate import Migrate
+from flask_sqlalchemy import SQLAlchemy
+import config
+
+app.config.from_object(config)
+db = SQLAlchemy()
+migrate = Migrate()
+db.init_app(app)
+migrate.init_app(app, db)
+
+class BusStop(db.Model):
+    __tablename__ = "bus_stop"
+    id = db.Column(db.Integer, primary_key = True)
+    station_name = db.Column(db.String(50), nullable = False)
+    station_id = db.Column(db.Integer, nullable = False)
+    geo_lat = db.Column(db.Integer, nullable = False)
+    geo_lng = db.Column(db.Integer, nullable = False)
+    region_name = db.Column(db.String(50), nullable = False)
+    bus_line = db.Column(db.String(100))
+
+class BusLine(db.Model):
+    __tablename__ = "bus_line"
+    id = db.Column(db.Integer, primary_key = True)
+    bus_line = db.Column(db.String(100), nullable = False)
+    station_id = db.Column(db.Integer, nullable = False)
+
 CORS(app, supports_credentials=True)
 
 # 초기 접속 페이지
