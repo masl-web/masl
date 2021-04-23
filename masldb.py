@@ -4,7 +4,7 @@ from haversine import haversine
 import json
 import requests
 
-masl_client = pymongo.MongoClient('mongodb://localhost:27017/')
+masl_client = pymongo.MongoClient('mongodb://masl:masl_dev@localhost:27017/')
 
 db = masl_client['LocationData']
 store_col = db['StoreData']

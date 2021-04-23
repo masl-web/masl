@@ -6,9 +6,12 @@ from operator import itemgetter
 import time
 import pandas as pd
 
+check_time = time.time()
+
 # MongoDB 연결 (localhost:27017은 default, 추후 변경)
 # masl_client = pymongo.MongoClient(host='host.docker.internal', port=27017)
-masl_client = pymongo.MongoClient('mongodb://localhost:27017/')
+# masl_client = pymongo.MongoClient('mongodb://localhost:27017/')
+masl_client = pymongo.MongoClient('mongodb://masl:masl_dev@localhost:27017/')
 
 # MASL용 데이터베이스 LocationData 생성
 db = masl_client['LocationData']
@@ -194,6 +197,18 @@ def areaTop10(brand, data_l, address):
                 {"$and": [{"geo_lng": {"$lte": data_l[i][3]+0.009}}, {"geo_lng": {"$gte": data_l[i][3]-0.009}}]}
                 ]}
         for s in store_col.find(query):
+            # start = time.time()
+            # x = s['geo_lat'] - data_l[i][2]
+            # y = s['geo_lng'] - data_l[i][3]
+            # r = (x**2 + y**2)**0.5
+            # print('r 값:', r)
+            # print('r 시간:', time.time() - start)
+
+            # start = time.time()
+            # hs = haversine([data_l[i][2],data_l[i][3]],[s["geo_lat"],s["geo_lng"]])
+            # print('hs 값:', hs)
+            # print('hs 시간:', time.time() - start)
+
             if haversine([data_l[i][2],data_l[i][3]],[s["geo_lat"],s["geo_lng"]]) <= 0.5:
                 if s['brand'] in data_l[i][0]:
                     pass

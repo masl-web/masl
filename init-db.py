@@ -5,7 +5,7 @@ import json
 import requests
 
 # Docker 환경에서 MongoDB 연결 설정
-masl_client = pymongo.MongoClient(host='host.docker.internal', port=27017)
+masl_client = pymongo.MongoClient('mongodb://masl:masl_dev@localhost:27017/')
 
 db = masl_client['LocationData']
 store_col = db['StoreData']
@@ -13,7 +13,7 @@ metro_col = db['MetroData']
 bus_stop_col = db['BusStopData']
 bus_lines_col = db['BusLinesData']
 env_col = db['EnvironmentData']
-'''
+
 # 위/경도로 행정지역명 반환하는 함수
 def regionName(lat, lng):
     url = 'https://dapi.kakao.com/v2/local/geo/coord2regioncode.json?{}'.format("x={0}&y={1}".format(lng, lat))
@@ -45,12 +45,12 @@ for i in range(0,11178):
         "geo_lat": bus_stop.loc[i][4], "geo_lng": bus_stop.loc[i][5], 
         "region_name": regionName(bus_stop.loc[i][4], bus_stop.loc[i][5]), 
         "bus_line": temp_list })
-'''
+
 # 버스노선 CSV 데이터 MongoDB에 적재
 bus_lines = pd.read_csv('BackData/bus_line_seoul_final.csv')
 for i in range(0,39362):
     bus_lines_col.insert({"station_id": int(bus_lines.loc[i][4]), "bus_line": str(bus_lines.loc[i][1])})
-'''
+
 # 매장 CSV 데이터 MongoDB에 적재
 store_files = [
     '0323_angelinus_seoul.csv',
@@ -76,13 +76,16 @@ store_files = [
     '0323_starbucks_seoul.csv',
     '0323_subway_seoul.csv'
 ]
+count = 0
 for file in store_files:
     store = pd.read_csv('BackData/'+file, encoding='utf-8')
+    count +=1
+    print("작업중:", count/len(store_files))
     for i in range(len(store)):
+        
         store_col.insert(dict({"type": store.loc[i][2], "brand": store.loc[i][3], "store_name": store.loc[i][4], "store_address": store.loc[i][5], 
             "geo_lat": store.loc[i][6], "geo_lng": store.loc[i][7]}))
 
 # 시설 CSV 데이터 MongoDB에 적재
-env_col.insert({"type": "공원", "name": "서초2동주민센터", "address": "서울 서초구 서초대로70길 51", "geo_lat": 37.4920694663699, "geo_lng": 127.024947759276})
+# env_col.insert({"type": "공원", "name": "서초2동주민센터", "address": "서울 서초구 서초대로70길 51", "geo_lat": 37.4920694663699, "geo_lng": 127.024947759276})
 # env_col.createIndex({"address":"text"})
-'''
