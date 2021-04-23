@@ -1,5 +1,10 @@
 # MASL
 
+*(ver 2.0 - on-going since 2021.03.25)*<br/>
+마슬은 내가 살기 좋은 동네의 다양한 정보를 알려주는 웹서비스입니다.<br/>
+거주지 추천 서비스에서 진화한 지역 주천 알고리즘과 다양한 지역 정보를 알려주는 웹 서비스입니다.
+
+*(ver 1.0 - expired since 2021.03.24)*<br/>
 **슬세권**은 슬리퍼를 신고 다닐 수 있는 거리에 자주 이용하는 시설들이 있는 권역을 의미합니다.  
 MASL은 사용자의 선호에 따라 **슬세권**을 파악하여 꼭 맞는 거주지를 추천하는 웹 서비스입니다.
 
@@ -82,10 +87,20 @@ MASL은 사용자의 선호에 따라 **슬세권**을 파악하여 꼭 맞는 �
 - Microsoft Azure VM
 - Ubuntu 18.04
 
-## Built With
+## Built With (link to Github)
 
-* [황정우](Link) - Product Owner
-* [김수영](Link) - Back-End / Algorithm
-* [하성민](Link) - Front-End / Data
+*(ver 2.0 - on-going since 2021.03.25)*<br/>
+* [황정우](https://github.com/ltxctdbnn ) - PO / Back-End
+* [배재욱]() - PM / Back-End / Back Team Leader
+* [정성헌](https://github.com/Heon4856) - Back-End
+* [하성민](https://github.com/makeitmin) - Front-End / Front Team Leader
+* [김수영](https://github.com/ksy9926) - Front-End
+* [윤맑은이슬](https://github.com/irisdew) - Front-End
+* [박정환](https://github.com/JeongHwan-dev) - Front-End
+
+*(ver 1.0 - expired since 2021.03.24)*<br/>
+* [황정우](https://github.com/ltxctdbnn ) - Product Owner
+* [김수영](https://github.com/ksy9926) - Back-End / Algorithm
+* [하성민](https://github.com/makeitmin) - Front-End / Data
 
 ## License
