@@ -16,6 +16,7 @@ import { textAlign } from '@material-ui/system';
 import AreaDetail from './AreaDetail';
 import UserInfo from './UserInfo';
 
+import ModifiedUserInfo from './ModifiedUserInfo';
 
 export default function App() {
 
@@ -26,6 +27,9 @@ export default function App() {
         <Route path='/userinfo' component={UserInfo} />
         <Route path="/masl" component={Masl} />
         <Route path="/detail" component={AreaDetail} />
+
+        <Route path="/temp" component={ModifiedUserInfo} /> 
+        {/* hover 부분 변경한 UserInfo 페이지 /temp에 라우팅 by 이슬 */}
       </Switch>
     </Router>
   )
