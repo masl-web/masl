@@ -1,10 +1,17 @@
 /* code by 성민 */
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import DaumPostcode from 'react-daum-postcode';
+import { useDispatch } from 'react-redux';
+import { setAddress } from './actions';
 
-import { useEffect, useState } from 'react';
+const { kakao } = window;
 
-function Postcode({ setAddress }){
+function Postcode(){
+
+    const geocoder = new kakao.maps.services.Geocoder(); // 주소-좌표 변환 객체를 생성합니다
+
+    const dispatch = useDispatch();
+    
     const handleComplete = (data) => {
       let fullAddress = data.address;
       let extraAddress = ''; 
@@ -18,7 +25,19 @@ function Postcode({ setAddress }){
         }
         fullAddress += (extraAddress !== '' ? ` (${extraAddress})` : '');
       }
-      setAddress(fullAddress);
+      
+      // 주소로 좌표를 검색합니다
+      geocoder.addressSearch(fullAddress, function(result, status) {
+        // 정상적으로 검색이 완료됐으면 
+         if (status === kakao.maps.services.Status.OK) {
+            console.log(result[0].y);
+             console.log(result[0].x);
+        } else {
+          console.log('주소 좌표 검색 실패')
+        }
+    })
+
+      dispatch(setAddress(fullAddress));
     }
 
     return (
