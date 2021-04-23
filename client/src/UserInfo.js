@@ -24,6 +24,7 @@ import FavoriteBorder from "@material-ui/icons/FavoriteBorder";
 
 import "./App.css";
 import Masl from "./Masl";
+import ModalAddress from "./ModalAddress";
 
 function Cafe({ index, cafe, checkedCafeHandler }) {
     const [bChecked, setChecked] = useState(false);
@@ -274,16 +275,21 @@ function UserInfo() {
 
     const [areaList, setAreaList] = useState();
 
-    const [place, setPlace] = useState();
-    function handleChangePlace(e) {
-        setPlace(e.target.value);
-    }
+    const [ modalOpen, setModalOpen ] = useState(false);
 
+    const [address, setAddress] = useState(null);
     const [userCafe, setUserCafe] = useState(new Set());
     const [userFastfood, setUserFastfood] = useState(new Set());
     const [userDrugstore, setUserDrugstore] = useState(new Set());
     const [userConvenience, setUserConvenience] = useState(new Set());
     const [userMart, setUserMart] = useState(new Set());
+    /* code by 성민 */
+    const openModal = () => {
+        setModalOpen(true);
+    }
+    const closeModal = () => {
+        setModalOpen(false);
+    }
 
     function handleSubmit(e){
         e.preventDefault();
@@ -297,7 +303,7 @@ function UserInfo() {
           
         console.log(brand);
         var userInfo = {
-            address: place,
+            address: address,
             brand: brand
         };
         axios.post('http://localhost:5000/userinfo', userInfo)
@@ -317,12 +323,16 @@ function UserInfo() {
     
     return (
         <>
+            {/* code by 성민 */}
+            <Row>
+                <Form>
+                    <Form.Control 
+                        placeholder="자주 가는 주소를 입력해주세요"
+                        onFocus={ openModal } />
+                </Form>
+                <ModalAddress open={ modalOpen } closeModal={ closeModal } address={address} setAddress={()=>{setAddress();}} header="자주 가는 곳이 어디신가요?"/>
+            </Row>
             <Form onSubmit={handleSubmit}>
-                <input
-                    type="text"
-                    onChange={handleChangePlace}
-                    placeholder="자주 가는 장소를 입력해주세요"
-                />
                 <p>카페</p>
                 <CafeList setUserCafe={setUserCafe}/>
                 <p>패스트푸드</p>
