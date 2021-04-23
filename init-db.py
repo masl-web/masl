@@ -76,13 +76,16 @@ store_files = [
     '0323_starbucks_seoul.csv',
     '0323_subway_seoul.csv'
 ]
+count = 0
 for file in store_files:
     store = pd.read_csv('BackData/'+file, encoding='utf-8')
+    count +=1
+    print("작업중:", count/len(store_files))
     for i in range(len(store)):
+        
         store_col.insert(dict({"type": store.loc[i][2], "brand": store.loc[i][3], "store_name": store.loc[i][4], "store_address": store.loc[i][5], 
             "geo_lat": store.loc[i][6], "geo_lng": store.loc[i][7]}))
 
 # 시설 CSV 데이터 MongoDB에 적재
 # env_col.insert({"type": "공원", "name": "서초2동주민센터", "address": "서울 서초구 서초대로70길 51", "geo_lat": 37.4920694663699, "geo_lng": 127.024947759276})
 # env_col.createIndex({"address":"text"})
-
