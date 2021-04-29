@@ -18,6 +18,7 @@ import AreaDetail from './AreaDetail';
 import UserInfo from './UserInfo';
 
 import ModifiedUserInfo from './ModifiedUserInfo';
+import KakaoMap from './MapMarker';
 
 export default function App() {
 
@@ -29,6 +30,8 @@ export default function App() {
         <Route path="/masl" component={Masl} />
         <Route path="/detail" component={AreaDetail} />
 
+
+        <Route path="/map" component={KakaoMap} />
         <Route path="/temp" component={ModifiedUserInfo} /> 
         {/* hover 부분 변경한 UserInfo 페이지 /temp에 라우팅 by 이슬 */}
       </Switch>
