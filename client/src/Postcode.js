@@ -2,7 +2,7 @@
 import React, { useEffect, useState } from 'react';
 import DaumPostcode from 'react-daum-postcode';
 import { useDispatch } from 'react-redux';
-import { setAddress } from './actions';
+import { setAddress, setLocation } from './actions';
 
 const { kakao } = window;
 
@@ -31,7 +31,8 @@ function Postcode(){
         // 정상적으로 검색이 완료됐으면 
          if (status === kakao.maps.services.Status.OK) {
             console.log(result[0].y);
-             console.log(result[0].x);
+            console.log(result[0].x);
+            dispatch(setLocation([result[0].y, result[0].x]))
         } else {
           console.log('주소 좌표 검색 실패')
         }

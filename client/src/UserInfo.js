@@ -25,7 +25,7 @@ import FavoriteBorder from "@material-ui/icons/FavoriteBorder";
 import "./App.css";
 import Masl from "./Masl";
 import ModalAddress from "./ModalAddress";
-import './ModifiedUserInfo.css';
+import './UserInfo.css';
 import { addBrand, removeBrand } from './actions'
 
 function Checkbox({ id, name, image }) {
@@ -194,8 +194,7 @@ function CheckboxList({ id, data }) {
 
 function UserInfo() {
     const history = useHistory();
-    const checkedBrand = useSelector((state)=> state.userInfo.brand);
-    const userAddress = useSelector((state) => state.userInfo.address);
+    const userInfo = useSelector((state)=> state.userInfo);
     const [areaList, setAreaList] = useState();
     const [ modalOpen, setModalOpen ] = useState(false);
     const [address, setAddress] = useState(null);
@@ -239,7 +238,7 @@ function UserInfo() {
          <ModalAddress 
             open={ modalOpen } 
             closeModal={ closeModal } 
-            address={userAddress} 
+            address={userInfo.address} 
             setAddress={()=>{setAddress();}} 
             header="자주 가는 곳이 어디신가요?"
         />
@@ -272,8 +271,7 @@ function UserInfo() {
     <hr />
     <Button variant="outlined" onClick={(e)=>{
       e.preventDefault();
-      console.log(checkedBrand);
-      console.log(userAddress);
+      console.log(userInfo)
     }}>찾기</Button>
     <hr />
     </Row>

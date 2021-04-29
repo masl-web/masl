@@ -18,3 +18,10 @@ export const setAddress = (payload) => {
       payload,
     }
 }
+
+export const setLocation = (payload) => {
+  return {
+    type: "SET_LOCATION",
+    payload,
+  }
+}
