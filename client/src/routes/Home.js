@@ -9,6 +9,9 @@ import Typography from "@material-ui/core/Typography";
 import Button from "@material-ui/core/Button";
 import "./css/Home.css";
 import sample from "./videos/background_video.mp4";
+import Introduction from "components/Introduction";
+import SampleOption from "components/SampleOption";
+import SurveyCard from "components/SurveyCard";
 
 const Home = () => {
   const useStyles = makeStyles((theme) => ({
@@ -57,15 +60,31 @@ const Home = () => {
           </Row>
           </Grid> */}
 
-      <Grid item xs={12} style={{ backgroundColor: "#f8f8f8" }}>
+      <Grid item xs={12}>
         <Row style={{ margin: 0 }}>
-          <div class="jb-box">
-            <video autoPlay loop muted>
-              <source src={sample} type="video/mp4" />
-            </video>
-          </div>
+          <video autoPlay loop muted>
+            <source src={sample} type="video/mp4" />
+          </video>
         </Row>
-        <Row></Row>
+        <Row>
+          <Col item xs={12} sm={3}>
+            <Introduction />
+          </Col>
+          <Col item xs={12} sm={9}>
+            <Row>
+              <Col item xs={12} sm={4}>
+                {/* <SampleOption no="1" /> */}
+                <SurveyCard />
+              </Col>
+              <Col item xs={12} sm={4}>
+                <SampleOption no="2" />
+              </Col>
+              <Col item xs={12} sm={4}>
+                <SampleOption no="3" />
+              </Col>
+            </Row>
+          </Col>
+        </Row>
       </Grid>
     </>
   );
